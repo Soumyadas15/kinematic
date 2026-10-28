@@ -1,0 +1,36 @@
+---
+title: Installation
+description: Add kinematic to a new or existing shadcn/ui project.
+---
+
+<Steps>
+<Step title="Set up shadcn/ui">
+
+Skip this if your project already has a `components.json`.
+
+<InstallCommand args="init" />
+
+</Step>
+<Step title="Add the registry">
+
+This adds the `@kinematic` namespace to your `components.json`.
+
+<InstallCommand args="registry add @kinematic=https://kinematic.design/r/{name}.json" />
+
+```json title="components.json"
+{
+  "registries": {
+    "@kinematic": "https://kinematic.design/r/{name}.json"
+  }
+}
+```
+
+</Step>
+<Step title="Add components">
+
+Shared pieces such as the spring presets come along automatically.
+
+<InstallCommand args="add @kinematic/tabs" />
+
+</Step>
+</Steps>

@@ -1,0 +1,58 @@
+---
+title: Kbd
+description: A small key cap for showing keyboard shortcuts and key combinations.
+registry: kbd
+---
+
+<ComponentPreview name="kbd" />
+
+## When to use
+
+- Showing shortcuts in menus, tooltips, command palettes or help text.
+- Documenting key combinations.
+
+## When not to use
+
+- **Code or file names.** Use a `code` element.
+- **Clickable controls.** Use a [Button](/docs/components/button).
+
+## Installation
+
+<AddCommand slug="kbd" />
+
+## Usage
+
+```tsx
+import { Kbd, KbdGroup } from "@/components/ui/kbd"
+
+<Kbd>Esc</Kbd>
+
+<KbdGroup>
+  <Kbd>⌘</Kbd>
+  <Kbd>K</Kbd>
+</KbdGroup>
+```
+
+## API Reference
+
+| Part | Description |
+| --- | --- |
+| `Kbd` | A single key. Accepts the props of a `kbd` element. Icons are sized automatically. |
+| `KbdGroup` | Lays out several keys in a row. Accepts the props of a `kbd` element. |
+
+## Accessibility
+
+Renders the native `kbd` element, which screen readers recognise as keyboard input. Symbols like `⌘` may be read inconsistently, so spell out the shortcut nearby or in an `aria-label` when it matters.
+
+## Motion
+
+None.
+
+## Notes for AI
+
+- Inside a [Tooltip](/docs/components/tooltip), `Kbd` adapts its colors to the tooltip automatically.
+- Use one `Kbd` per key and wrap combinations in `KbdGroup`. Don't write "⌘K" in a single key.
+
+## Source
+
+<RegistrySource path="kinematic/ui/kbd.tsx" title="components/ui/kbd.tsx" />

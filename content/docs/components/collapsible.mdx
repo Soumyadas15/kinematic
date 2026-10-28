@@ -1,0 +1,83 @@
+---
+title: Collapsible
+description: A single region that shows and hides, with its height springing open and closed.
+registry: collapsible
+---
+
+<ComponentPreview name="collapsible" />
+
+## When to use
+
+- Revealing secondary detail on demand, like extra rows, advanced options or a long description.
+- Building your own disclosure patterns, such as a sidebar group or a "show more" list.
+
+## When not to use
+
+- **Several related sections.** Use an [Accordion](/docs/components/accordion).
+- **Content that should float over the page.** Use a [Popover](/docs/components/popover).
+
+## Installation
+
+<AddCommand slug="collapsible" />
+
+## Usage
+
+```tsx
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible"
+
+<Collapsible>
+  <CollapsibleTrigger asChild>
+    <Button variant="ghost">Show branches</Button>
+  </CollapsibleTrigger>
+  <CollapsibleContent className="flex flex-col gap-2">
+    <div>feature/onboarding-v2</div>
+    <div>fix/invoice-rounding</div>
+  </CollapsibleContent>
+</Collapsible>
+```
+
+## API Reference
+
+### Collapsible
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `open` | `boolean` | | Controlled open state. |
+| `defaultOpen` | `boolean` | `false` | Initial open state when uncontrolled. |
+| `onOpenChange` | `(open: boolean) => void` | | Called when the region opens or closes. |
+| `disabled` | `boolean` | `false` | Prevents toggling. |
+
+### CollapsibleContent
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `className` | `string` | | Applied to the inner element, not the animated wrapper. |
+
+Also exported: `CollapsibleTrigger`.
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| `Space` / `Enter` | Opens or closes the region from the trigger. |
+
+## Accessibility
+
+Built on Radix Collapsible. The trigger gets `aria-expanded` and `aria-controls`. Closed content is unmounted once its exit finishes, so it can't be focused or read while hidden.
+
+## Motion
+
+Height springs between zero and the content's natural height with the **smooth** spring, with a light fade. Toggling mid-animation reverses from wherever it is. Instant with reduced motion.
+
+## Notes for AI
+
+- Put layout classes like `flex flex-col gap-2` on `CollapsibleContent`. They apply to the inner element so the height animation stays clean.
+- The trigger has no built-in icon. Pass a button with `asChild` and add your own chevron.
+
+## Source
+
+<RegistrySource path="kinematic/ui/collapsible.tsx" title="components/ui/collapsible.tsx" />

@@ -1,0 +1,67 @@
+---
+title: Button
+description: The shadcn button you know, with a spring press that settles instead of snapping.
+registry: button
+---
+
+<ComponentPreview name="button" />
+
+## When to use
+
+- Triggering an action: saving, submitting, opening a dialog.
+- The primary call to action in a form or toolbar. Use one `default` button per area so the main action is obvious.
+
+## When not to use
+
+- **Navigating to another page.** Use a link, or `<Button asChild><Link /></Button>` when it must look like a button.
+- **Toggling a setting on and off.** Use [Switch](/docs/components/switch).
+- **Choosing from several actions.** Use [Dropdown Menu](/docs/components/dropdown-menu).
+
+## Installation
+
+<AddCommand slug="button" />
+
+## Usage
+
+```tsx
+import { Button } from "@/components/ui/button"
+
+<Button>Continue</Button>
+```
+
+## API Reference
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `variant` | `"default" \| "secondary" \| "outline" \| "ghost" \| "destructive" \| "link"` | `"default"` | Visual style. |
+| `size` | `"default" \| "xs" \| "sm" \| "lg" \| "icon" \| "icon-sm" \| "icon-lg"` | `"default"` | Height and padding. |
+| `asChild` | `boolean` | `false` | Render the child element instead. Disables the press spring. |
+
+Every other prop is passed to the underlying `motion.button`.
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| `Tab` | Moves focus to the button. |
+| `Enter` / `Space` | Activates the button. |
+
+## Accessibility
+
+- Renders a native `<button>`, so focus, activation and form submission work without extra ARIA.
+- Icon-only buttons need an `aria-label`.
+- `disabled` uses the native attribute, which removes the button from the tab order.
+
+## Motion
+
+Pressing scales the button to `0.97` with the **snappy** spring and releases with the same spring, so a quick tap never looks like it restarted. With reduced motion, the press is instant.
+
+## Notes for AI
+
+- Use `variant="default"` for at most one primary action per area.
+- Don't add `transition-all` or `active:` transforms. The spring owns `transform`.
+- For links, wrap with `asChild` instead of nesting an `<a>` inside the button.
+
+## Source
+
+<RegistrySource path="kinematic/ui/button.tsx" title="components/ui/button.tsx" />

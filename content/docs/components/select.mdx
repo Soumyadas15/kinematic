@@ -1,0 +1,117 @@
+---
+title: Select
+description: A form control for picking one value from a list, where the panel springs from the trigger and the highlight rests on the current choice.
+registry: select
+---
+
+<ComponentPreview name="select" />
+
+## When to use
+
+- Choosing one value from a known list of roughly 5 to 30 options in a form.
+- Settings where the current value should be visible at a glance.
+
+## When not to use
+
+- **Two to four options.** Show them all with a [Radio Group](/docs/components/radio-group) or [Toggle Group](/docs/components/toggle-group).
+- **Long or searchable lists.** Use a [Command](/docs/components/command) inside a [Popover](/docs/components/popover).
+- **Triggering actions.** Use a [Dropdown Menu](/docs/components/dropdown-menu).
+
+## Installation
+
+<AddCommand slug="select" />
+
+## Usage
+
+```tsx
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+
+<Select defaultValue="medium">
+  <SelectTrigger className="w-40">
+    <SelectValue placeholder="Priority" />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem value="high">High</SelectItem>
+    <SelectItem value="medium">Medium</SelectItem>
+    <SelectItem value="low">Low</SelectItem>
+  </SelectContent>
+</Select>
+```
+
+## API Reference
+
+### Select
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `value` | `string` | | Controlled value. |
+| `defaultValue` | `string` | | Initial value when uncontrolled. |
+| `onValueChange` | `(value: string) => void` | | Called when the user picks an item. |
+| `open` | `boolean` | | Controlled open state. |
+| `defaultOpen` | `boolean` | `false` | Initial open state when uncontrolled. |
+| `onOpenChange` | `(open: boolean) => void` | | Called when the list opens or closes. |
+| `name` | `string` | | Name used when submitting a form. |
+| `disabled` | `boolean` | `false` | Disables the whole control. |
+| `required` | `boolean` | `false` | Marks the field as required in a form. |
+
+### SelectTrigger
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `size` | `"sm" \| "default"` | `"default"` | Trigger height. |
+
+### SelectContent
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `position` | `"popper" \| "item-aligned"` | `"popper"` | `popper` places the list below the trigger. `item-aligned` overlays the selected item on the trigger, macOS style. |
+| `side` | `"top" \| "right" \| "bottom" \| "left"` | `"bottom"` | Preferred side, popper only. |
+| `align` | `"start" \| "center" \| "end"` | `"start"` | Alignment against the trigger, popper only. |
+| `sideOffset` | `number` | `6` | Distance from the trigger, popper only. |
+
+### SelectItem
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `value` | `string` | | Required. Must not be an empty string. |
+| `disabled` | `boolean` | `false` | Skips the item during navigation. |
+| `textValue` | `string` | | Text used for typeahead when children aren't plain text. |
+
+Also exported: `SelectGroup`, `SelectLabel`, `SelectSeparator`, `SelectScrollUpButton` and `SelectScrollDownButton`.
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| `Enter` / `Space` / `ArrowDown` / `ArrowUp` | Opens the list from the trigger and focuses the selected item. |
+| `ArrowUp` / `ArrowDown` | Moves between items. |
+| `Home` / `End` | Moves to the first or last item. |
+| `Enter` / `Space` | Selects the focused item and closes the list. |
+| `Escape` | Closes the list without changing the value. |
+| Letters | Jumps to the next item starting with those letters. |
+
+## Accessibility
+
+Built on Radix Select. The trigger is a `combobox` with `aria-expanded`, the list is a `listbox` and items are `option`s with `aria-selected`. A hidden native `select` keeps form submission and autofill working. Label the trigger with a `<label>` or `aria-label`. The check and the highlight are `aria-hidden`.
+
+## Motion
+
+The list scales up from the trigger with the **snappy** spring and exits with the same spring. The trigger's chevron rotates in step while the list is open. Once the panel settles, the gliding highlight fades in on the selected item, then follows the pointer and keyboard focus between items. With reduced motion everything is instant.
+
+`position` defaults to `"popper"` because it gives the panel a stable transform origin at the trigger, which keeps the enter and exit animation reliable. `"item-aligned"` still works, but the panel scales from its own centre.
+
+## Notes for AI
+
+- Never use `value=""` on a `SelectItem`. Use a placeholder on `SelectValue` to represent no selection.
+- Use `defaultValue` for uncontrolled forms and `value` with `onValueChange` for controlled ones. Don't mix them.
+- Don't add `data-[side=bottom]:translate-y-1` style classes. Spacing comes from `sideOffset`.
+
+## Source
+
+<RegistrySource path="kinematic/ui/select.tsx" title="components/ui/select.tsx" />

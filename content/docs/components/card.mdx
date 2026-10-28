@@ -1,0 +1,80 @@
+---
+title: Card
+description: A bordered surface for grouping related content and actions, with header, action, content and footer slots.
+registry: card
+---
+
+<ComponentPreview name="card" />
+
+## When to use
+
+- Grouping a self-contained unit of information, like a plan, a stat or a settings section.
+- Grids of comparable items.
+
+## When not to use
+
+- **Wrapping everything.** Cards inside cards add noise. Use spacing and a [Separator](/docs/components/separator).
+- **Urgent messages.** Use an [Alert](/docs/components/alert).
+
+## Installation
+
+<AddCommand slug="card" />
+
+## Usage
+
+```tsx
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+
+<Card>
+  <CardHeader>
+    <CardTitle>Pro plan</CardTitle>
+    <CardDescription>Renews on 1 December.</CardDescription>
+    <CardAction>
+      <Button variant="link">Change</Button>
+    </CardAction>
+  </CardHeader>
+  <CardContent>Usage details</CardContent>
+  <CardFooter>
+    <Button>Upgrade</Button>
+  </CardFooter>
+</Card>
+```
+
+## API Reference
+
+Every part accepts the props of a `div`.
+
+| Part | Description |
+| --- | --- |
+| `Card` | The bordered surface. |
+| `CardHeader` | Title, description and optional action. Add `border-b` to get a divider with matching padding. |
+| `CardTitle` | Heading text. Render a heading with your own element if the page outline needs one. |
+| `CardDescription` | Muted supporting text. |
+| `CardAction` | Pinned to the top-right of the header. |
+| `CardContent` | Main body. |
+| `CardFooter` | Actions row. Add `border-t` for a divider. |
+
+## Accessibility
+
+Cards are plain `div`s with no role. `CardTitle` is a `div`, so wrap or replace it with a real heading (`h2`, `h3`) when the card is a page section.
+
+## Motion
+
+None. Cards are static surfaces. Put motion in what they contain.
+
+## Notes for AI
+
+- `CardAction` only lines up when it's a direct child of `CardHeader`.
+- Use `border-b` on `CardHeader` or `border-t` on `CardFooter` for dividers. Don't add a `Separator` inside.
+
+## Source
+
+<RegistrySource path="kinematic/ui/card.tsx" title="components/ui/card.tsx" />

@@ -1,0 +1,98 @@
+---
+title: Alert Dialog
+description: A confirmation dialog that needs an explicit answer, and nudges in place when you click outside it instead of closing.
+registry: alert-dialog
+---
+
+<ComponentPreview name="alert-dialog" />
+
+## When to use
+
+- Confirming destructive or irreversible actions, such as deleting a project.
+- Interrupting the user with something they must acknowledge.
+
+## When not to use
+
+- **Forms and general tasks.** Use a [Dialog](/docs/components/dialog).
+- **Undo-able actions.** Do the action and offer undo in a [toast](/docs/components/sonner).
+- **Inline warnings.** Use an [Alert](/docs/components/alert).
+
+## Installation
+
+<AddCommand slug="alert-dialog" />
+
+## Usage
+
+```tsx
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+
+<AlertDialog>
+  <AlertDialogTrigger asChild>
+    <Button variant="destructive">Delete project</Button>
+  </AlertDialogTrigger>
+  <AlertDialogContent>
+    <AlertDialogHeader>
+      <AlertDialogTitle>Delete this project?</AlertDialogTitle>
+      <AlertDialogDescription>This can't be undone.</AlertDialogDescription>
+    </AlertDialogHeader>
+    <AlertDialogFooter>
+      <AlertDialogCancel>Cancel</AlertDialogCancel>
+      <AlertDialogAction>Delete</AlertDialogAction>
+    </AlertDialogFooter>
+  </AlertDialogContent>
+</AlertDialog>
+```
+
+## API Reference
+
+### AlertDialog
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `open` | `boolean` | | Controlled open state. |
+| `defaultOpen` | `boolean` | `false` | Initial open state when uncontrolled. |
+| `onOpenChange` | `(open: boolean) => void` | | Called when the dialog opens or closes. |
+
+### AlertDialogAction / AlertDialogCancel
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `className` | `string` | | Merged over `buttonVariants()` (Action) or `buttonVariants({ variant: "outline" })` (Cancel). |
+| `asChild` | `boolean` | `false` | Renders your own element instead of a button. |
+
+Also exported: `AlertDialogTrigger`, `AlertDialogContent`, `AlertDialogHeader`, `AlertDialogFooter`, `AlertDialogTitle`, `AlertDialogDescription`, `AlertDialogOverlay` and `AlertDialogPortal`.
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| `Enter` / `Space` | Opens the dialog from the trigger, or activates the focused button. |
+| `Tab` / `Shift+Tab` | Moves focus between the buttons. Focus is trapped. |
+| `Escape` | Closes the dialog, like Cancel. |
+
+## Accessibility
+
+Built on Radix Alert Dialog, which sets `role="alertdialog"`, links the title and description, traps focus and moves initial focus to `AlertDialogCancel`. Clicks outside never close it, so the user has to choose.
+
+## Motion
+
+Opens and closes like [Dialog](/docs/components/dialog): the overlay fades and the content scales up from a light blur on the **gentle** spring. Clicking the overlay gives the content a small **snappy** scale nudge that settles on the gentle spring, a cue that an answer is needed. With reduced motion the nudge and transitions are instant.
+
+## Notes for AI
+
+- To make the action destructive, pass `className={buttonVariants({ variant: "destructive" })}` to `AlertDialogAction`.
+- Don't use an alert dialog for anything the user can undo.
+
+## Source
+
+<RegistrySource path="kinematic/ui/alert-dialog.tsx" title="components/ui/alert-dialog.tsx" />

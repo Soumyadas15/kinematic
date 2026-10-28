@@ -1,0 +1,98 @@
+---
+title: Sonner
+description: Stacked toast notifications themed with Kinematic tokens, where icons pop in as each toast settles.
+registry: sonner
+---
+
+<ComponentPreview name="sonner" />
+
+## When to use
+
+- Confirming an action that already happened, such as "Invite sent".
+- Reporting background work with `toast.promise`, from loading to done.
+- Offering a short undo window after a reversible action.
+
+## When not to use
+
+- **Errors that block the user.** Show them inline or in an [Alert](/docs/components/alert).
+- **Decisions the user must make.** Use an [Alert Dialog](/docs/components/alert-dialog).
+- **Contextual hints** tied to one element. Use a [Tooltip](/docs/components/tooltip) or [Popover](/docs/components/popover).
+
+## Installation
+
+<AddCommand slug="sonner" />
+
+## Usage
+
+Render the `Toaster` once near the root of your app, then call `toast` from anywhere.
+
+```tsx
+import { Toaster, toast } from "@/components/ui/sonner"
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body>
+        {children}
+        <Toaster />
+      </body>
+    </html>
+  )
+}
+
+toast.success("Invite sent", { description: "maya@acme.dev will get an email." })
+```
+
+## API Reference
+
+### Toaster
+
+Accepts every [sonner](https://sonner.emilkowal.ski) `Toaster` prop. The common ones:
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `theme` | `"light" \| "dark" \| "system"` | from `<html class="dark">` | Colour scheme. Without it, the toaster follows the `dark` class on `<html>` and updates when it changes. |
+| `position` | `"top-left" \| "top-center" \| "top-right" \| "bottom-left" \| "bottom-center" \| "bottom-right"` | `"bottom-right"` | Where the stack sits. |
+| `expand` | `boolean` | `false` | Keep the stack expanded instead of expanding on hover. |
+| `visibleToasts` | `number` | `3` | How many toasts show in the stack. |
+| `closeButton` | `boolean` | `false` | Show a close button on each toast. |
+| `richColors` | `boolean` | `false` | Use coloured backgrounds for success, error, warning and info. |
+| `duration` | `number` | `4000` | Default time in ms before a toast dismisses. |
+| `gap` | `number` | `10` | Space between expanded toasts in px. |
+
+### toast
+
+| Call | Description |
+| --- | --- |
+| `toast(message, options?)` | Default toast. |
+| `toast.success` / `toast.error` / `toast.warning` / `toast.info` | Toast with a status icon. |
+| `toast.promise(promise, { loading, success, error })` | Shows a spinner, then swaps to the result. |
+| `toast.dismiss(id?)` | Dismisses one toast or all of them. |
+
+Options include `description`, `action: { label, onClick }`, `cancel`, `duration` and `id`.
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| `Alt+T` | Moves focus to the toast stack and expands it. |
+| `Tab` | Moves between toast actions and close buttons. |
+| `Escape` | Collapses the stack when focus is inside it. |
+
+## Accessibility
+
+The toaster is a labelled region ("Notifications") with `aria-live="polite"`, so new toasts are announced without stealing focus. Toasts pause their timer while hovered or focused. Keep actions optional: anything important must also be reachable outside the toast.
+
+## Motion
+
+Sonner owns the stack physics: toasts slide in, stack with depth and fan out on hover. The Kinematic layer adds a status icon that pops in with the **snappy** spring when a toast appears or a promise resolves. The icon pop is instant with reduced motion. Sonner's own transitions respect `prefers-reduced-motion`.
+
+## Notes for AI
+
+- Import `toast` from `@/components/ui/sonner` (it is re-exported), and render exactly one `Toaster`.
+- This project has no `next-themes`. Pass `theme` explicitly if your app does not toggle a `dark` class on `<html>`.
+- Keep toast copy to one short title and an optional one-line description.
+
+## Source
+
+<RegistrySource path="kinematic/ui/sonner.tsx" title="components/ui/sonner.tsx" />

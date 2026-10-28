@@ -1,0 +1,936 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "kinematic",
+  "homepage": "https://kinematic.design",
+  "items": [
+    {
+      "name": "motion",
+      "type": "registry:lib",
+      "title": "Motion",
+      "description": "Shared spring presets that respect reduced motion.",
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "src/registry/kinematic/lib/motion.tsx",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "use-controllable-state",
+      "type": "registry:hook",
+      "title": "useControllableState",
+      "description": "Controlled or uncontrolled state with a single API.",
+      "files": [
+        {
+          "path": "src/registry/kinematic/hooks/use-controllable-state.ts",
+          "type": "registry:hook"
+        }
+      ]
+    },
+    {
+      "name": "fluid-highlight",
+      "type": "registry:ui",
+      "title": "Fluid Highlight",
+      "description": "One hover highlight per group that glides between items.",
+      "dependencies": [
+        "motion",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@kinematic/motion"
+      ],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/fluid-highlight.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "button",
+      "type": "registry:ui",
+      "title": "Button",
+      "description": "A button with a spring press.",
+      "dependencies": [
+        "motion",
+        "radix-ui",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "@kinematic/motion"
+      ],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/button.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "tabs",
+      "type": "registry:ui",
+      "title": "Tabs",
+      "description": "Tabs with a gliding hover highlight and a spring active indicator.",
+      "dependencies": [
+        "motion",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@kinematic/motion",
+        "@kinematic/use-controllable-state",
+        "@kinematic/fluid-highlight"
+      ],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/tabs.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "switch",
+      "type": "registry:ui",
+      "title": "Switch",
+      "description": "A switch whose thumb stretches on press and springs across.",
+      "dependencies": [
+        "motion",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@kinematic/motion",
+        "@kinematic/use-controllable-state"
+      ],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/switch.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "dropdown-menu",
+      "type": "registry:ui",
+      "title": "Dropdown Menu",
+      "description": "A menu that springs open from its trigger, with one highlight gliding between items.",
+      "dependencies": [
+        "motion",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@kinematic/motion",
+        "@kinematic/use-controllable-state",
+        "@kinematic/fluid-highlight"
+      ],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/dropdown-menu.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "text-units",
+      "type": "registry:lib",
+      "title": "Text Units",
+      "description": "Splits text into words or graphemes for animation.",
+      "dependencies": [],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "src/registry/kinematic/lib/text-units.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "text-effects",
+      "type": "registry:lib",
+      "title": "Text Effects",
+      "description": "Shared entrance frames for kinematic text components.",
+      "dependencies": [],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "src/registry/kinematic/lib/text-effects.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "use-smooth-text",
+      "type": "registry:hook",
+      "title": "useSmoothText",
+      "description": "Releases streamed text at a steady, self-correcting rate.",
+      "dependencies": [
+        "motion"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "src/registry/kinematic/hooks/use-smooth-text.ts",
+          "type": "registry:hook"
+        }
+      ]
+    },
+    {
+      "name": "streaming-text",
+      "type": "registry:ui",
+      "title": "Streaming Text",
+      "description": "Renders streamed model output, smoothing token bursts and easing each new word into place.",
+      "dependencies": [
+        "motion"
+      ],
+      "registryDependencies": [
+        "@kinematic/motion",
+        "@kinematic/use-smooth-text",
+        "@kinematic/text-effects",
+        "@kinematic/text-units"
+      ],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/streaming-text.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "text-reveal",
+      "type": "registry:ui",
+      "title": "Text Reveal",
+      "description": "Staggers a fixed string into view by word or letter.",
+      "dependencies": [
+        "motion"
+      ],
+      "registryDependencies": [
+        "@kinematic/motion",
+        "@kinematic/text-effects",
+        "@kinematic/text-units"
+      ],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/text-reveal.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "shimmer-text",
+      "type": "registry:ui",
+      "title": "Shimmer Text",
+      "description": "A band of light that sweeps across text for thinking states.",
+      "dependencies": [
+        "motion"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/shimmer-text.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "typing-indicator",
+      "type": "registry:ui",
+      "title": "Typing Indicator",
+      "description": "Three dots rising and falling in a soft wave.",
+      "dependencies": [
+        "motion"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/typing-indicator.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "dialog",
+      "type": "registry:ui",
+      "title": "Dialog",
+      "description": "A modal window that springs in from slightly smaller and out of focus, then springs back out the same way, so quick open and close never jumps.",
+      "dependencies": [
+        "motion",
+        "radix-ui",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@kinematic/motion",
+        "@kinematic/use-controllable-state"
+      ],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/dialog.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "alert-dialog",
+      "type": "registry:ui",
+      "title": "Alert Dialog",
+      "description": "A confirmation dialog that needs an explicit answer, and nudges in place when you click outside it instead of closing.",
+      "dependencies": [
+        "motion",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@kinematic/motion",
+        "@kinematic/use-controllable-state",
+        "@kinematic/button"
+      ],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/alert-dialog.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "sheet",
+      "type": "registry:ui",
+      "title": "Sheet",
+      "description": "A panel that springs in from any edge of the screen and springs back out the same way, without ever showing a gap at the edge.",
+      "dependencies": [
+        "motion",
+        "radix-ui",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@kinematic/motion",
+        "@kinematic/use-controllable-state"
+      ],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/sheet.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "drawer",
+      "type": "registry:ui",
+      "title": "Drawer",
+      "description": "A draggable panel built on vaul that follows your finger and flings closed, with a handle that stretches while you drag.",
+      "dependencies": [
+        "motion",
+        "vaul"
+      ],
+      "registryDependencies": [
+        "@kinematic/motion"
+      ],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/drawer.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "command",
+      "type": "registry:ui",
+      "title": "Command",
+      "description": "A searchable command menu built on cmdk, where one highlight glides between results for arrow keys and hover alike, and the list springs to its new height as you type.",
+      "dependencies": [
+        "motion",
+        "cmdk",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@kinematic/motion",
+        "@kinematic/fluid-highlight",
+        "@kinematic/dialog"
+      ],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/command.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "label",
+      "type": "registry:ui",
+      "title": "Label",
+      "description": "An accessible label for form controls that dims with its disabled control.",
+      "dependencies": [
+        "radix-ui"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/label.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "input",
+      "type": "registry:ui",
+      "title": "Input",
+      "description": "A text field whose border and focus ring ease in on hover and focus instead of snapping.",
+      "dependencies": [],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/input.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "textarea",
+      "type": "registry:ui",
+      "title": "Textarea",
+      "description": "A multi-line text field that grows with its content and eases its focus ring in.",
+      "dependencies": [],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/textarea.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "checkbox",
+      "type": "registry:ui",
+      "title": "Checkbox",
+      "description": "A checkbox whose check mark draws itself in with a snappy spring and retracts when unchecked.",
+      "dependencies": [
+        "motion",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@kinematic/motion",
+        "@kinematic/use-controllable-state"
+      ],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/checkbox.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "radio-group",
+      "type": "registry:ui",
+      "title": "Radio Group",
+      "description": "A set of mutually exclusive options whose inner dot springs in on the chosen item and out of the last one.",
+      "dependencies": [
+        "motion",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@kinematic/motion",
+        "@kinematic/use-controllable-state"
+      ],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/radio-group.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "slider",
+      "type": "registry:ui",
+      "title": "Slider",
+      "description": "A range input whose thumb swells while you drag it, with the filled range tracking it exactly.",
+      "dependencies": [
+        "motion",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@kinematic/motion"
+      ],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/slider.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "toggle",
+      "type": "registry:ui",
+      "title": "Toggle",
+      "description": "A two-state button that presses in with a snappy spring, for on/off tools like bold or bookmark.",
+      "dependencies": [
+        "motion",
+        "radix-ui",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "@kinematic/motion"
+      ],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/toggle.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "toggle-group",
+      "type": "registry:ui",
+      "title": "Toggle Group",
+      "description": "A set of toggles where, in single mode, one pill glides to the pressed item and a hover highlight follows the pointer.",
+      "dependencies": [
+        "motion",
+        "radix-ui",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "@kinematic/motion",
+        "@kinematic/use-controllable-state",
+        "@kinematic/fluid-highlight",
+        "@kinematic/toggle"
+      ],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/toggle-group.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "input-otp",
+      "type": "registry:ui",
+      "title": "Input OTP",
+      "description": "A one-time code field where the focus ring glides between slots and each typed character pops in.",
+      "dependencies": [
+        "motion",
+        "input-otp",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@kinematic/motion"
+      ],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/input-otp.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "accordion",
+      "type": "registry:ui",
+      "title": "Accordion",
+      "description": "A stack of collapsible sections whose content springs open to its natural height while the chevron turns.",
+      "dependencies": [
+        "motion",
+        "radix-ui",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@kinematic/motion",
+        "@kinematic/use-controllable-state"
+      ],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/accordion.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "collapsible",
+      "type": "registry:ui",
+      "title": "Collapsible",
+      "description": "A single region that shows and hides, with its height springing open and closed.",
+      "dependencies": [
+        "motion",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@kinematic/motion",
+        "@kinematic/use-controllable-state"
+      ],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/collapsible.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "card",
+      "type": "registry:ui",
+      "title": "Card",
+      "description": "A bordered surface for grouping related content and actions, with header, action, content and footer slots.",
+      "dependencies": [],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/card.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "badge",
+      "type": "registry:ui",
+      "title": "Badge",
+      "description": "A small label for status, counts or metadata, in four variants.",
+      "dependencies": [
+        "radix-ui",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/badge.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "avatar",
+      "type": "registry:ui",
+      "title": "Avatar",
+      "description": "A user image with an initials fallback that crossfades into the photo once it loads.",
+      "dependencies": [
+        "motion",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@kinematic/motion"
+      ],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/avatar.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "alert",
+      "type": "registry:ui",
+      "title": "Alert",
+      "description": "An inline callout for important messages, with an optional icon, title and description.",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/alert.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "separator",
+      "type": "registry:ui",
+      "title": "Separator",
+      "description": "A thin horizontal or vertical rule that divides content.",
+      "dependencies": [
+        "radix-ui"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/separator.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "skeleton",
+      "type": "registry:ui",
+      "title": "Skeleton",
+      "description": "A placeholder block for loading content, with a soft shimmer that sweeps across it.",
+      "dependencies": [],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/skeleton.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "progress",
+      "type": "registry:ui",
+      "title": "Progress",
+      "description": "A horizontal bar showing how far a task has got, with the fill springing to each new value.",
+      "dependencies": [
+        "motion",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@kinematic/motion"
+      ],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/progress.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "scroll-area",
+      "type": "registry:ui",
+      "title": "Scroll Area",
+      "description": "A scroll container with slim custom scrollbars that fade in while you hover or scroll.",
+      "dependencies": [
+        "motion",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@kinematic/motion"
+      ],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/scroll-area.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "kbd",
+      "type": "registry:ui",
+      "title": "Kbd",
+      "description": "A small key cap for showing keyboard shortcuts and key combinations.",
+      "dependencies": [],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/kbd.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "navigation-menu",
+      "type": "registry:ui",
+      "title": "Navigation Menu",
+      "description": "A site navigation bar whose panel springs to the size of each section and slides in from the direction you moved.",
+      "dependencies": [
+        "motion",
+        "radix-ui",
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "@kinematic/motion",
+        "@kinematic/use-controllable-state",
+        "@kinematic/fluid-highlight"
+      ],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/navigation-menu.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "breadcrumb",
+      "type": "registry:ui",
+      "title": "Breadcrumb",
+      "description": "A trail of links to the current page, with one highlight gliding between links as you hover.",
+      "dependencies": [
+        "radix-ui",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@kinematic/fluid-highlight"
+      ],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/breadcrumb.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "pagination",
+      "type": "registry:ui",
+      "title": "Pagination",
+      "description": "Page links for long result sets, with a pill that glides to the current page.",
+      "dependencies": [
+        "motion",
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "@kinematic/motion",
+        "@kinematic/button"
+      ],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/pagination.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "sonner",
+      "type": "registry:ui",
+      "title": "Sonner",
+      "description": "Stacked toast notifications themed with Kinematic tokens, where icons pop in as each toast settles.",
+      "dependencies": [
+        "sonner",
+        "motion",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@kinematic/motion"
+      ],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/sonner.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "table",
+      "type": "registry:ui",
+      "title": "Table",
+      "description": "A semantic data table where one highlight glides between body rows as you hover.",
+      "dependencies": [],
+      "registryDependencies": [
+        "@kinematic/fluid-highlight"
+      ],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/table.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "popover",
+      "type": "registry:ui",
+      "title": "Popover",
+      "description": "A floating panel anchored to its trigger that springs out from the trigger's side and settles back the same way.",
+      "dependencies": [
+        "motion",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@kinematic/motion",
+        "@kinematic/use-controllable-state"
+      ],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/popover.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "tooltip",
+      "type": "registry:ui",
+      "title": "Tooltip",
+      "description": "A short label that pops from its trigger and skips the delay when you move to the next one.",
+      "dependencies": [
+        "motion",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@kinematic/motion",
+        "@kinematic/use-controllable-state"
+      ],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/tooltip.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "hover-card",
+      "type": "registry:ui",
+      "title": "Hover Card",
+      "description": "A preview card that opens on hover intent and springs out from the side of its link.",
+      "dependencies": [
+        "motion",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@kinematic/motion",
+        "@kinematic/use-controllable-state"
+      ],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/hover-card.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "select",
+      "type": "registry:ui",
+      "title": "Select",
+      "description": "A form control for picking one value from a list, where the panel springs from the trigger and the highlight rests on the current choice.",
+      "dependencies": [
+        "motion",
+        "radix-ui",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@kinematic/motion",
+        "@kinematic/use-controllable-state",
+        "@kinematic/fluid-highlight"
+      ],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/select.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "context-menu",
+      "type": "registry:ui",
+      "title": "Context Menu",
+      "description": "A right-click menu that springs open from the pointer, with one highlight gliding between items and sub-menus.",
+      "dependencies": [
+        "motion",
+        "radix-ui",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@kinematic/motion",
+        "@kinematic/use-controllable-state",
+        "@kinematic/fluid-highlight"
+      ],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/context-menu.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "menubar",
+      "type": "registry:ui",
+      "title": "Menubar",
+      "description": "A desktop-style row of menus where one highlight slides between triggers and rests on the open one, and each menu springs from its trigger.",
+      "dependencies": [
+        "motion",
+        "radix-ui",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@kinematic/motion",
+        "@kinematic/use-controllable-state",
+        "@kinematic/fluid-highlight"
+      ],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/menubar.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    }
+  ]
+}

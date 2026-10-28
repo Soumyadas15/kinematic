@@ -1,0 +1,58 @@
+---
+title: Text Reveal
+description: Staggers a fixed string into view word by word or letter by letter, with blur, fade or rise.
+registry: text-reveal
+fancy: true
+---
+
+<ComponentPreview name="text-reveal" />
+
+## When to use
+
+- Headlines and hero copy that should arrive with some ceremony.
+- Section titles revealed as they scroll into view.
+
+## When not to use
+
+- **Text that streams in.** Use [Streaming Text](/docs/components/streaming-text).
+- **Body copy.** Long paragraphs revealed word by word slow people down.
+
+## Installation
+
+<AddCommand slug="text-reveal" />
+
+## Usage
+
+```tsx
+import { TextReveal } from "@/components/ui/text-reveal"
+
+<TextReveal text="Interfaces that feel alive." />
+```
+
+## API Reference
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `text` | `string` | | The text to reveal. |
+| `effect` | `"blur" \| "fade" \| "rise"` | `"blur"` | How each unit enters. |
+| `by` | `"word" \| "char"` | `"word"` | The unit that animates. Letters stay grouped by word, so lines never break mid-word. |
+| `stagger` | `number` | `0.05`, or `0.018` by character | Seconds between units. |
+| `delay` | `number` | `0` | Seconds before the first unit. |
+| `trigger` | `"mount" \| "inView"` | `"mount"` | Play on mount, or once when scrolled into view. |
+
+## Accessibility
+
+The full string is set as `aria-label` and the animated pieces are `aria-hidden`, so screen readers read the sentence once instead of letter by letter.
+
+## Motion
+
+Every unit uses the **gentle** spring without overshoot, offset by `stagger`. With reduced motion, the text appears immediately.
+
+## Notes for AI
+
+- Keep it to one or two lines. It's for headlines, not paragraphs.
+- Use `trigger="inView"` for anything below the fold, or it plays before anyone sees it.
+
+## Source
+
+<RegistrySource path="kinematic/ui/text-reveal.tsx" title="components/ui/text-reveal.tsx" />

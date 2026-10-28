@@ -1,0 +1,58 @@
+---
+title: Label
+description: An accessible label for form controls that dims with its disabled control.
+registry: label
+---
+
+<ComponentPreview name="label" />
+
+## When to use
+
+- Naming any form control: [Input](/docs/components/input), [Textarea](/docs/components/textarea), [Checkbox](/docs/components/checkbox), [Switch](/docs/components/switch) or [Slider](/docs/components/slider).
+- Making a small control easier to hit, since clicking the label focuses or toggles it.
+
+## When not to use
+
+- **Headings or section titles.** Use a heading element.
+- **Helper or error text.** Use a muted paragraph linked with `aria-describedby`.
+
+## Installation
+
+<AddCommand slug="label" />
+
+## Usage
+
+```tsx
+import { Label } from "@/components/ui/label"
+
+<div className="grid gap-2">
+  <Label htmlFor="email">Email</Label>
+  <Input id="email" type="email" />
+</div>
+```
+
+## API Reference
+
+### Label
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `htmlFor` | `string` | | The `id` of the control this label names. |
+| `asChild` | `boolean` | `false` | Renders the child element instead of a `<label>`. |
+
+## Accessibility
+
+Built on Radix Label, which renders a native `<label>`. Always pair it with a control through `htmlFor` and `id`, or wrap the control inside it. It prevents text selection on double click so fast toggling stays clean.
+
+## Motion
+
+None. Label is a primitive that other controls lean on. It dims instantly when its peer control is disabled, or when a parent has `data-disabled="true"` and the `group` class.
+
+## Notes for AI
+
+- Place the label after a `peer` control (Checkbox, Switch, RadioGroupItem) as a sibling, or the `peer-disabled` styles will not apply.
+- Do not use `Label` without `htmlFor` or a wrapped control. An orphan label names nothing.
+
+## Source
+
+<RegistrySource path="kinematic/ui/label.tsx" title="components/ui/label.tsx" />

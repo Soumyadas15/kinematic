@@ -1,0 +1,85 @@
+---
+title: Table
+description: A semantic data table where one highlight glides between body rows as you hover.
+registry: table
+---
+
+<ComponentPreview name="table" />
+
+## When to use
+
+- Comparing records across the same set of columns, such as invoices or users.
+- Read-heavy data where alignment and scanning matter.
+
+## When not to use
+
+- **Layout.** Use CSS grid or flex, not a table.
+- **A single record.** Use a description list or a [Card](/docs/components/card).
+- **Very large datasets.** Pair it with [Pagination](/docs/components/pagination) or virtualisation.
+
+## Installation
+
+<AddCommand slug="table" />
+
+## Usage
+
+```tsx
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+
+<Table>
+  <TableCaption>Recent invoices.</TableCaption>
+  <TableHeader>
+    <TableRow>
+      <TableHead>Invoice</TableHead>
+      <TableHead className="text-right">Amount</TableHead>
+    </TableRow>
+  </TableHeader>
+  <TableBody>
+    <TableRow>
+      <TableCell>INV-1042</TableCell>
+      <TableCell className="text-right">$1,250.00</TableCell>
+    </TableRow>
+  </TableBody>
+</Table>
+```
+
+## API Reference
+
+All parts accept the props of the matching HTML element.
+
+| Part | Element | Notes |
+| --- | --- | --- |
+| `Table` | `table` | Wrapped in a scrollable container that hosts the row highlight. |
+| `TableHeader` | `thead` | |
+| `TableBody` | `tbody` | Rows inside it join the gliding highlight. |
+| `TableFooter` | `tfoot` | Muted background. Rows here do not highlight. |
+| `TableRow` | `tr` | Set `data-state="selected"` for a persistent selected background. |
+| `TableHead` | `th` | |
+| `TableCell` | `td` | |
+| `TableCaption` | `caption` | Rendered below the table. |
+
+## Accessibility
+
+Plain HTML table elements, so screen readers get row and column navigation for free. Use `TableHead` for column headers and add a `TableCaption` to describe the data. The highlight lives outside the table markup and is `aria-hidden`, so it never changes the table structure.
+
+## Motion
+
+Hovering a body row moves a shared highlight to it with the **snappy** spring, so scanning down a column feels continuous. It fades out when the pointer leaves the table. With reduced motion it jumps.
+
+## Notes for AI
+
+- Keep header and footer rows inside `TableHeader` and `TableFooter`. Only `TableBody` rows join the highlight.
+- Don't add `hover:bg-*` to rows; the gliding highlight already covers hover.
+- Mark selected rows with `data-state="selected"`, not a custom class.
+
+## Source
+
+<RegistrySource path="kinematic/ui/table.tsx" title="components/ui/table.tsx" />

@@ -1,0 +1,77 @@
+---
+title: Slider
+description: A range input whose thumb swells while you drag it, with the filled range tracking it exactly.
+registry: slider
+---
+
+<ComponentPreview name="slider" />
+
+## When to use
+
+- Picking a value where the relative position matters more than the exact number, such as volume or opacity.
+- Picking a range with two thumbs, such as a price filter.
+
+## When not to use
+
+- **Precise values.** Use an [Input](/docs/components/input) with `type="number"`, or pair the slider with one.
+- **A handful of discrete options.** Use a [Toggle Group](/docs/components/toggle-group) or [Radio Group](/docs/components/radio-group).
+
+## Installation
+
+<AddCommand slug="slider" />
+
+## Usage
+
+```tsx
+import { Slider } from "@/components/ui/slider"
+
+<Slider defaultValue={[50]} max={100} step={1} aria-label="Volume" />
+
+<Slider defaultValue={[20, 80]} minStepsBetweenThumbs={5} />
+```
+
+## API Reference
+
+### Slider
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `value` | `number[]` | | Controlled values, one per thumb. |
+| `defaultValue` | `number[]` | | Initial values when uncontrolled. Two values render two thumbs. |
+| `onValueChange` | `(value: number[]) => void` | | Called on every change while dragging. |
+| `onValueCommit` | `(value: number[]) => void` | | Called once when a drag or key press ends. |
+| `min` | `number` | `0` | Lowest value. |
+| `max` | `number` | `100` | Highest value. |
+| `step` | `number` | `1` | Increment between values. |
+| `minStepsBetweenThumbs` | `number` | `0` | Minimum gap between thumbs, in steps. |
+| `orientation` | `"horizontal" \| "vertical"` | `"horizontal"` | Layout direction. |
+| `disabled` | `boolean` | `false` | Blocks interaction. |
+
+The number of thumbs follows the length of `value` or `defaultValue`. With neither, it renders two thumbs at `min` and `max`, like shadcn/ui.
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| `ArrowRight` / `ArrowUp` | Increases the focused thumb by one step. |
+| `ArrowLeft` / `ArrowDown` | Decreases the focused thumb by one step. |
+| `Shift` + Arrow | Changes the value by ten steps. |
+| `PageUp` / `PageDown` | Increases or decreases by ten steps. |
+| `Home` / `End` | Sets the focused thumb to the minimum or maximum. |
+
+## Accessibility
+
+Built on Radix Slider. Each thumb has `role="slider"` with `aria-valuemin`, `aria-valuemax` and `aria-valuenow`. With two thumbs, Radix labels them "Minimum" and "Maximum". Name a single slider with `aria-label` or `aria-labelledby`.
+
+## Motion
+
+While a thumb is pressed or dragged it scales up with the **snappy** spring and settles back on release. Position is never animated: the thumb and the filled range are placed by Radix on every pointer move, so they stay locked to the pointer and to each other. Instant with reduced motion.
+
+## Notes for AI
+
+- `value` and `defaultValue` are arrays, even for one thumb: `[50]`, not `50`.
+- Use `onValueCommit` for expensive work like network requests. `onValueChange` fires on every pointer move.
+
+## Source
+
+<RegistrySource path="kinematic/ui/slider.tsx" title="components/ui/slider.tsx" />

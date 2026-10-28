@@ -1,0 +1,99 @@
+---
+title: Dialog
+description: A modal window that springs in from slightly smaller and out of focus, then springs back out the same way, so quick open and close never jumps.
+registry: dialog
+---
+
+<ComponentPreview name="dialog" />
+
+## When to use
+
+- Short, focused tasks that need the user's full attention, such as editing a record.
+- Content that must be confirmed or dismissed before returning to the page.
+
+## When not to use
+
+- **Destructive confirmations.** Use an [Alert Dialog](/docs/components/alert-dialog) so a click outside can't dismiss it.
+- **Long forms or side panels.** Use a [Sheet](/docs/components/sheet), or a [Drawer](/docs/components/drawer) on mobile.
+- **Small, non-blocking hints.** Use a [Popover](/docs/components/popover) or [Tooltip](/docs/components/tooltip).
+
+## Installation
+
+<AddCommand slug="dialog" />
+
+## Usage
+
+```tsx
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+
+<Dialog>
+  <DialogTrigger asChild>
+    <Button variant="outline">Edit profile</Button>
+  </DialogTrigger>
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>Edit profile</DialogTitle>
+      <DialogDescription>Changes are visible once you save.</DialogDescription>
+    </DialogHeader>
+    <DialogFooter>
+      <Button>Save changes</Button>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>
+```
+
+## API Reference
+
+### Dialog
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `open` | `boolean` | | Controlled open state. |
+| `defaultOpen` | `boolean` | `false` | Initial open state when uncontrolled. |
+| `onOpenChange` | `(open: boolean) => void` | | Called when the dialog opens or closes. |
+| `modal` | `boolean` | `true` | Blocks interaction with the rest of the page. |
+
+### DialogContent
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `showCloseButton` | `boolean` | `true` | Renders the close button in the top-right corner. |
+| `style` | `MotionStyle` | | Merged over the centering offsets. Accepts Motion values. |
+| `onEscapeKeyDown` | `(event: KeyboardEvent) => void` | | Call `event.preventDefault()` to keep the dialog open. |
+| `onInteractOutside` | `(event: Event) => void` | | Call `event.preventDefault()` to ignore outside clicks. |
+
+Also exported: `DialogTrigger`, `DialogClose`, `DialogHeader`, `DialogFooter`, `DialogTitle`, `DialogDescription`, `DialogOverlay` and `DialogPortal`.
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| `Enter` / `Space` | Opens the dialog from the trigger. |
+| `Tab` / `Shift+Tab` | Moves focus between elements inside the dialog. Focus is trapped. |
+| `Escape` | Closes the dialog and returns focus to the trigger. |
+
+## Accessibility
+
+Built on Radix Dialog, which sets `role="dialog"` and `aria-modal`, links `DialogTitle` and `DialogDescription` with `aria-labelledby` and `aria-describedby`, traps focus and hides the rest of the page from assistive tech. Always render a `DialogTitle`. Hide it with `sr-only` if the design has no visible heading.
+
+## Motion
+
+The overlay fades and the content rises from 96% scale with a light blur, both on the **gentle** spring. Exit uses the same spring in reverse. While closing, the surface stops catching clicks, so reopening mid-exit springs it back from where it is. With reduced motion both are instant.
+
+## Notes for AI
+
+- The content is centered with Motion `x` and `y`. Don't add Tailwind `translate-*` or `transition-all` classes to `DialogContent`.
+- Every dialog needs a `DialogTitle`, even a visually hidden one.
+- Use `DialogClose asChild` around footer buttons that should close the dialog.
+
+## Source
+
+<RegistrySource path="kinematic/ui/dialog.tsx" title="components/ui/dialog.tsx" />

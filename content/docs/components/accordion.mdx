@@ -1,0 +1,100 @@
+---
+title: Accordion
+description: A stack of collapsible sections whose content springs open to its natural height while the chevron turns.
+registry: accordion
+---
+
+<ComponentPreview name="accordion" />
+
+## When to use
+
+- FAQs, settings groups or long forms where people only need one section at a time.
+- Reducing scroll on dense pages without hiding content behind navigation.
+
+## When not to use
+
+- **A single show/hide region.** Use a [Collapsible](/docs/components/collapsible).
+- **Switching between peer views.** Use [Tabs](/docs/components/tabs).
+- **Content everyone needs to read.** Leave it visible.
+
+## Installation
+
+<AddCommand slug="accordion" />
+
+## Usage
+
+```tsx
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
+
+<Accordion type="single" collapsible defaultValue="billing">
+  <AccordionItem value="billing">
+    <AccordionTrigger>When am I charged?</AccordionTrigger>
+    <AccordionContent>On the first of each month.</AccordionContent>
+  </AccordionItem>
+  <AccordionItem value="export">
+    <AccordionTrigger>Can I export my data?</AccordionTrigger>
+    <AccordionContent>Yes, from Settings.</AccordionContent>
+  </AccordionItem>
+</Accordion>
+```
+
+## API Reference
+
+### Accordion
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `type` | `"single" \| "multiple"` | | Whether one or many items can be open. Required. |
+| `value` | `string \| string[]` | | Controlled open item(s). A string for `single`, an array for `multiple`. |
+| `defaultValue` | `string \| string[]` | `""` / `[]` | Initially open item(s) when uncontrolled. |
+| `onValueChange` | `(value: string \| string[]) => void` | | Called when items open or close. |
+| `collapsible` | `boolean` | `false` | With `type="single"`, lets the open item be closed. |
+| `disabled` | `boolean` | `false` | Disables every item. |
+| `orientation` | `"vertical" \| "horizontal"` | `"vertical"` | Arrow key direction. |
+
+### AccordionItem
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `value` | `string` | | Unique identifier. Required. |
+| `disabled` | `boolean` | `false` | Prevents the item from opening or closing. |
+
+### AccordionContent
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `className` | `string` | | Applied to the inner padded element, not the animated wrapper. |
+
+Also exported: `AccordionTrigger`.
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| `Space` / `Enter` | Opens or closes the focused item. |
+| `Tab` / `Shift+Tab` | Moves focus to the next or previous focusable element. |
+| `ArrowDown` / `ArrowUp` | Moves focus to the next or previous trigger. |
+| `Home` / `End` | Moves focus to the first or last trigger. |
+
+## Accessibility
+
+Built on Radix Accordion. Triggers are buttons inside headings with `aria-expanded` and `aria-controls`, and content is a `region` labelled by its trigger. Closed content is unmounted once its exit finishes, so hidden text is never read out or tabbed into.
+
+## Motion
+
+Content height springs from zero to its natural height with the **smooth** spring and fades in alongside it. Closing runs the same spring in reverse. With `type="single"`, one item closes while the next opens on the same spring, so the list moves as one continuous motion. The chevron rotates with the **snappy** spring. Everything is instant with reduced motion.
+
+## Notes for AI
+
+- Put padding and layout classes on `AccordionContent` through `className`. They land on the inner element, so they never fight the height animation.
+- `type` is required. Use `collapsible` with `type="single"` if the open item should be closable.
+- Don't add `animate-accordion-*` classes. Motion owns the height.
+
+## Source
+
+<RegistrySource path="kinematic/ui/accordion.tsx" title="components/ui/accordion.tsx" />

@@ -1,0 +1,42 @@
+---
+title: Motion
+description: Three springs tune every movement in kinematic.
+---
+
+<SpringVisualizer />
+
+## Presets
+
+**snappy** is for direct feedback such as presses and hover. **smooth** is for state changes such as tabs and toggles. **gentle** is for larger surfaces entering the screen. Each one is defined by how long it looks like it takes and how much it overshoots, not by stiffness and damping numbers.
+
+`useSpringPreset` returns an instant transition when the user prefers reduced motion, so every component respects it for free.
+
+## Usage
+
+```tsx
+import { motion } from "motion/react"
+import { useSpringPreset } from "@/lib/motion"
+
+function Thing({ open }: { open: boolean }) {
+  const transition = useSpringPreset("smooth")
+  return <motion.div animate={{ height: open ? "auto" : 0 }} transition={transition} />
+}
+```
+
+## Slow motion
+
+Wrap any part of your app in `MotionSpeedProvider` to slow every kinematic spring inside it. Handy for tuning, and it's what powers the slow motion switch on the home page.
+
+```tsx
+import { MotionSpeedProvider } from "@/lib/motion"
+
+<MotionSpeedProvider speed={0.2}>
+  <App />
+</MotionSpeedProvider>
+```
+
+## Source
+
+<InstallCommand args="add @kinematic/motion" />
+
+<RegistrySource path="kinematic/lib/motion.tsx" title="lib/motion.tsx" />

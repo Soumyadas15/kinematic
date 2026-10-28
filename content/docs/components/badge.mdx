@@ -1,0 +1,62 @@
+---
+title: Badge
+description: A small label for status, counts or metadata, in four variants.
+registry: badge
+---
+
+<ComponentPreview name="badge" />
+
+## When to use
+
+- Short status labels like "Draft", "Failed" or a version number.
+- Counts next to a nav item or tab.
+
+## When not to use
+
+- **Actions.** Use a [Button](/docs/components/button).
+- **Longer messages.** Use an [Alert](/docs/components/alert) or a toast with [Sonner](/docs/components/sonner).
+- **Toggling filters.** Use a [Toggle](/docs/components/toggle).
+
+## Installation
+
+<AddCommand slug="badge" />
+
+## Usage
+
+```tsx
+import { Badge } from "@/components/ui/badge"
+
+<Badge>New</Badge>
+<Badge variant="destructive">Failed</Badge>
+<Badge asChild variant="outline">
+  <a href="/changelog">Changelog</a>
+</Badge>
+```
+
+## API Reference
+
+### Badge
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `variant` | `"default" \| "secondary" \| "destructive" \| "outline"` | `"default"` | Visual style. |
+| `asChild` | `boolean` | `false` | Renders the child element, such as a link, with badge styles. |
+
+Also exported: `badgeVariants`.
+
+## Accessibility
+
+A badge is a `span` with no role. Don't rely on color alone for status. Keep the text meaningful ("Failed", not just a red dot). When a badge is a link, it gets a focus ring and hover state.
+
+## Motion
+
+None. Badges are static labels. Hover color only changes when rendered as a link.
+
+## Notes for AI
+
+- Use `asChild` with an `<a>` for clickable badges. Don't put `onClick` on a span.
+- Icons inside a badge are sized automatically. Don't add `size-*` classes to them.
+
+## Source
+
+<RegistrySource path="kinematic/ui/badge.tsx" title="components/ui/badge.tsx" />

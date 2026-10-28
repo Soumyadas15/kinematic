@@ -1,0 +1,97 @@
+---
+title: Input OTP
+description: A one-time code field where the focus ring glides between slots and each typed character pops in.
+registry: input-otp
+---
+
+<ComponentPreview name="input-otp" />
+
+## When to use
+
+- Verification and two-factor codes sent by email or SMS.
+- Short fixed-length codes like PINs or invite codes.
+
+## When not to use
+
+- **Passwords or free-length text.** Use an [Input](/docs/components/input).
+- **Long codes people paste, like API keys.** Use an [Input](/docs/components/input).
+
+## Installation
+
+<AddCommand slug="input-otp" />
+
+## Usage
+
+```tsx
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from "@/components/ui/input-otp"
+
+<InputOTP maxLength={6}>
+  <InputOTPGroup>
+    <InputOTPSlot index={0} />
+    <InputOTPSlot index={1} />
+    <InputOTPSlot index={2} />
+  </InputOTPGroup>
+  <InputOTPSeparator />
+  <InputOTPGroup>
+    <InputOTPSlot index={3} />
+    <InputOTPSlot index={4} />
+    <InputOTPSlot index={5} />
+  </InputOTPGroup>
+</InputOTP>
+```
+
+## API Reference
+
+### InputOTP
+
+Accepts every prop from [`input-otp`](https://input-otp.rodz.dev).
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `maxLength` | `number` | | Number of characters. Required. |
+| `value` | `string` | | Controlled value. |
+| `onChange` | `(value: string) => void` | | Called on every change. |
+| `onComplete` | `(value: string) => void` | | Called when every slot is filled. |
+| `pattern` | `string` | | Allowed characters, such as `REGEXP_ONLY_DIGITS` from `input-otp`. |
+| `containerClassName` | `string` | | Class for the wrapper around the groups. |
+| `disabled` | `boolean` | `false` | Blocks interaction and dims the slots. |
+
+### InputOTPSlot
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `index` | `number` | | Which character this slot shows. Required. |
+
+Also exported: `InputOTPGroup` and `InputOTPSeparator`.
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| Characters | Fills the active slot and moves to the next. |
+| `Backspace` | Clears the previous character. |
+| `ArrowLeft` / `ArrowRight` | Moves the active slot. |
+| `Cmd` / `Ctrl` + `V` | Pastes a full code across the slots. |
+
+## Accessibility
+
+`input-otp` renders one real, transparent `<input>` over the slots, so screen readers, password managers and SMS autofill (`autocomplete="one-time-code"`) see a normal text field. The slots, ring and caret are visual only. Give the field an `aria-label` or a [Label](/docs/components/label).
+
+## Motion
+
+The active ring is one shared element that moves between slots with the **snappy** spring through a Motion `layoutId`. Typed characters scale and fade in with the snappy spring, and deleted ones scale out. The fake caret blinks with a smooth-spring fade. Under reduced motion the ring jumps and characters appear instantly.
+
+## Notes for AI
+
+- Slot `index` values must cover `0` to `maxLength - 1` exactly once.
+- Use `pattern={REGEXP_ONLY_DIGITS}` from `input-otp` to reject letters in numeric codes.
+- Do not render your own `<input>` inside. `InputOTP` already owns the real input.
+
+## Source
+
+<RegistrySource path="kinematic/ui/input-otp.tsx" title="components/ui/input-otp.tsx" />

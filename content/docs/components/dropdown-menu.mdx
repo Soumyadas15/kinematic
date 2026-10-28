@@ -1,0 +1,92 @@
+---
+title: Dropdown Menu
+description: A menu that springs open from its trigger, with one highlight gliding between items for pointer and keyboard alike.
+registry: dropdown-menu
+---
+
+<ComponentPreview name="dropdown-menu" />
+
+## When to use
+
+- Grouping secondary actions behind one trigger, such as a row's "more" button.
+- Actions that don't deserve permanent space in the layout.
+
+## When not to use
+
+- **Choosing a value for a form field.** Use a select.
+- **The primary action.** Give it a visible [Button](/docs/components/button).
+- **Navigation menus** with many pages. Use a nav or a command palette.
+
+## Installation
+
+<AddCommand slug="dropdown-menu" />
+
+## Usage
+
+```tsx
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+
+<DropdownMenu>
+  <DropdownMenuTrigger asChild>
+    <Button variant="outline">Actions</Button>
+  </DropdownMenuTrigger>
+  <DropdownMenuContent>
+    <DropdownMenuItem>Rename</DropdownMenuItem>
+    <DropdownMenuItem>Duplicate</DropdownMenuItem>
+    <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
+  </DropdownMenuContent>
+</DropdownMenu>
+```
+
+## API Reference
+
+### DropdownMenu
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `open` | `boolean` | | Controlled open state. |
+| `defaultOpen` | `boolean` | `false` | Initial open state when uncontrolled. |
+| `onOpenChange` | `(open: boolean) => void` | | Called when the menu opens or closes. |
+
+### DropdownMenuItem
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `variant` | `"default" \| "destructive"` | `"default"` | Visual style. |
+| `onSelect` | `(event: Event) => void` | | Called when the item is chosen. |
+| `disabled` | `boolean` | `false` | Skips the item during navigation. |
+
+Also exported: `DropdownMenuLabel`, `DropdownMenuSeparator`, `DropdownMenuShortcut` and `DropdownMenuGroup`.
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| `Enter` / `Space` / `ArrowDown` | Opens the menu from the trigger. |
+| `ArrowUp` / `ArrowDown` | Moves between items. |
+| `Home` / `End` | Moves to the first or last item. |
+| `Enter` / `Space` | Chooses the focused item. |
+| `Escape` | Closes the menu and returns focus to the trigger. |
+| Letters | Jumps to the next item starting with that letter. |
+
+## Accessibility
+
+Built on Radix Dropdown Menu, which handles `menu` and `menuitem` roles, focus management and typeahead. The gliding highlight is `aria-hidden` and follows real focus, so what you see is what assistive tech reports.
+
+## Motion
+
+The menu scales up from the side of its trigger with the **snappy** spring and exits with the same spring, so opening and closing quickly never jumps. The highlight glides between items on hover and keyboard focus. Both are instant with reduced motion.
+
+## Notes for AI
+
+- Use `DropdownMenuItem asChild` with an `<a>` for links inside the menu.
+- Put destructive actions last, after a separator, with `variant="destructive"`.
+
+## Source
+
+<RegistrySource path="kinematic/ui/dropdown-menu.tsx" title="components/ui/dropdown-menu.tsx" />

@@ -1,0 +1,55 @@
+---
+title: Shimmer Text
+description: A soft band of light that sweeps across text, for thinking and loading states.
+registry: shimmer-text
+fancy: true
+---
+
+<ComponentPreview name="shimmer-text" />
+
+## When to use
+
+- Showing that a model is thinking, before the first token arrives.
+- Labels for short background work, such as "Searching the web".
+
+## When not to use
+
+- **Text people need to read carefully.** The sweep lowers contrast while it passes.
+- **Long waits with known progress.** Use a progress bar.
+
+## Installation
+
+<AddCommand slug="shimmer-text" />
+
+## Usage
+
+```tsx
+import { ShimmerText } from "@/components/ui/shimmer-text"
+
+<ShimmerText>Thinking...</ShimmerText>
+```
+
+## API Reference
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `duration` | `number` | `2` | Seconds for one sweep. |
+
+Other props are passed to the underlying `motion.span`.
+
+## Accessibility
+
+The text stays real text. If the label is a status, put it in an element with `role="status"` so the change is announced.
+
+## Motion
+
+A gradient is clipped to the text and its position loops linearly, so the light never speeds up or stops. With reduced motion, the text is shown in the muted color with no sweep.
+
+## Notes for AI
+
+- Keep the label short, three or four words.
+- Swap it for the real content as soon as the first token arrives. Don't shimmer a finished answer.
+
+## Source
+
+<RegistrySource path="kinematic/ui/shimmer-text.tsx" title="components/ui/shimmer-text.tsx" />

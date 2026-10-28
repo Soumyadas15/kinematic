@@ -1,0 +1,97 @@
+---
+title: Drawer
+description: A draggable panel built on vaul that follows your finger and flings closed, with a handle that stretches while you drag.
+registry: drawer
+---
+
+<ComponentPreview name="drawer" />
+
+## When to use
+
+- Mobile-first panels that users expect to swipe away.
+- Quick pickers and short forms on touch devices.
+
+## When not to use
+
+- **Desktop side panels.** Use a [Sheet](/docs/components/sheet).
+- **Centered tasks or confirmations.** Use a [Dialog](/docs/components/dialog) or [Alert Dialog](/docs/components/alert-dialog).
+
+## Installation
+
+<AddCommand slug="drawer" />
+
+## Usage
+
+```tsx
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer"
+
+<Drawer>
+  <DrawerTrigger asChild>
+    <Button variant="outline">Open</Button>
+  </DrawerTrigger>
+  <DrawerContent>
+    <DrawerHeader>
+      <DrawerTitle>Move goal</DrawerTitle>
+      <DrawerDescription>Set your daily activity target.</DrawerDescription>
+    </DrawerHeader>
+    <DrawerFooter>
+      <DrawerClose asChild>
+        <Button>Done</Button>
+      </DrawerClose>
+    </DrawerFooter>
+  </DrawerContent>
+</Drawer>
+```
+
+## API Reference
+
+### Drawer
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `open` | `boolean` | | Controlled open state. |
+| `onOpenChange` | `(open: boolean) => void` | | Called when the drawer opens or closes. |
+| `direction` | `"top" \| "right" \| "bottom" \| "left"` | `"bottom"` | The edge the drawer comes from. |
+| `snapPoints` | `(number \| string)[]` | | Heights the drawer can rest at, as fractions or pixel strings. |
+| `dismissible` | `boolean` | `true` | Allows closing by dragging or clicking outside. |
+| `shouldScaleBackground` | `boolean` | `false` | Scales the page behind the drawer. Needs a `[vaul-drawer-wrapper]` element. |
+| `onDrag` | `(event, percentageDragged: number) => void` | | Called while dragging. |
+| `onRelease` | `(event, open: boolean) => void` | | Called when the drag ends. |
+
+All other [vaul](https://vaul.emilkowal.ski) root props are supported.
+
+Also exported: `DrawerTrigger`, `DrawerContent`, `DrawerClose`, `DrawerHeader`, `DrawerFooter`, `DrawerTitle`, `DrawerDescription`, `DrawerOverlay` and `DrawerPortal`.
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| `Enter` / `Space` | Opens the drawer from the trigger. |
+| `Tab` / `Shift+Tab` | Moves focus inside the drawer. Focus is trapped. |
+| `Escape` | Closes the drawer and returns focus to the trigger. |
+
+## Accessibility
+
+vaul is built on Radix Dialog, so the drawer has `role="dialog"`, a focus trap and labelling through `DrawerTitle` and `DrawerDescription`. The handle is decorative and `aria-hidden`. Dragging is never the only way to close: Escape, the overlay and `DrawerClose` all work.
+
+## Motion
+
+vaul owns the drag physics: the panel tracks the pointer, follows velocity on release and snaps open or closed. The handle stretches and brightens with the **snappy** spring while any drag is in progress, then relaxes on release. The handle response is instant with reduced motion.
+
+## Notes for AI
+
+- Don't wrap `DrawerContent` in Motion or add transform classes. vaul sets the transform while dragging.
+- For responsive UIs, render a `Dialog` on desktop and a `Drawer` on mobile with the same content.
+
+## Source
+
+<RegistrySource path="kinematic/ui/drawer.tsx" title="components/ui/drawer.tsx" />

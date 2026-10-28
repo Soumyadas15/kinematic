@@ -1,0 +1,70 @@
+---
+title: Tabs
+description: Tabs with a hover highlight that glides between triggers and an active pill that springs into place.
+registry: tabs
+---
+
+<ComponentPreview name="tabs" />
+
+## When to use
+
+- Switching between related views of the same object, such as Overview, Activity and Settings.
+- A small number of peers, roughly two to six, that fit on one line.
+
+## When not to use
+
+- **Steps in a sequence.** Use a stepper, since tabs suggest any order is fine.
+- **Navigating between pages.** Use links in a nav, so the URL and back button work.
+- **Many options.** Use a select or [Dropdown Menu](/docs/components/dropdown-menu).
+
+## Installation
+
+<AddCommand slug="tabs" />
+
+## Usage
+
+```tsx
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+
+<Tabs defaultValue="account">
+  <TabsList>
+    <TabsTrigger value="account">Account</TabsTrigger>
+    <TabsTrigger value="password">Password</TabsTrigger>
+  </TabsList>
+  <TabsContent value="account">Account settings.</TabsContent>
+  <TabsContent value="password">Change your password.</TabsContent>
+</Tabs>
+```
+
+## API Reference
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `value` | `string` | | Controlled active tab. |
+| `defaultValue` | `string` | | Initial active tab when uncontrolled. |
+| `onValueChange` | `(value: string) => void` | | Called when the active tab changes. |
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| `Tab` | Moves focus to the active trigger, then into the panel. |
+| `ArrowLeft` / `ArrowRight` | Moves to the previous or next trigger and activates it. |
+| `Home` / `End` | Moves to the first or last trigger. |
+
+## Accessibility
+
+Built on Radix Tabs, so `tablist`, `tab` and `tabpanel` roles, `aria-selected` and `aria-controls` are handled for you. The hover highlight is `aria-hidden` and purely visual.
+
+## Motion
+
+The hover highlight uses the **snappy** spring and glides between triggers. The active pill uses **smooth** and is a shared layout element, so it moves between triggers instead of fading. Both are instant with reduced motion.
+
+## Notes for AI
+
+- Keep labels short; the active pill resizes to fit each trigger.
+- Don't put a second highlight or indicator inside `TabsTrigger`. One is already rendered.
+
+## Source
+
+<RegistrySource path="kinematic/ui/tabs.tsx" title="components/ui/tabs.tsx" />

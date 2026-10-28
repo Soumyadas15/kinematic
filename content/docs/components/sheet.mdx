@@ -1,0 +1,91 @@
+---
+title: Sheet
+description: A panel that springs in from any edge of the screen and springs back out the same way, without ever showing a gap at the edge.
+registry: sheet
+---
+
+<ComponentPreview name="sheet" />
+
+## When to use
+
+- Secondary content that benefits from staying next to the page, such as settings, filters or details.
+- Longer forms that would crowd a centered dialog.
+
+## When not to use
+
+- **Short confirmations.** Use a [Dialog](/docs/components/dialog) or [Alert Dialog](/docs/components/alert-dialog).
+- **Mobile bottom panels the user drags to dismiss.** Use a [Drawer](/docs/components/drawer).
+- **Permanent navigation.** Put it in the layout.
+
+## Installation
+
+<AddCommand slug="sheet" />
+
+## Usage
+
+```tsx
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
+
+<Sheet>
+  <SheetTrigger asChild>
+    <Button variant="outline">Open</Button>
+  </SheetTrigger>
+  <SheetContent side="right">
+    <SheetHeader>
+      <SheetTitle>Notifications</SheetTitle>
+      <SheetDescription>Choose where we reach you.</SheetDescription>
+    </SheetHeader>
+  </SheetContent>
+</Sheet>
+```
+
+## API Reference
+
+### Sheet
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `open` | `boolean` | | Controlled open state. |
+| `defaultOpen` | `boolean` | `false` | Initial open state when uncontrolled. |
+| `onOpenChange` | `(open: boolean) => void` | | Called when the sheet opens or closes. |
+
+### SheetContent
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `side` | `"top" \| "right" \| "bottom" \| "left"` | `"right"` | The edge the sheet slides in from. |
+| `showCloseButton` | `boolean` | `true` | Renders the close button in the top-right corner. |
+
+Also exported: `SheetTrigger`, `SheetClose`, `SheetHeader`, `SheetFooter`, `SheetTitle` and `SheetDescription`.
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| `Enter` / `Space` | Opens the sheet from the trigger. |
+| `Tab` / `Shift+Tab` | Moves focus inside the sheet. Focus is trapped. |
+| `Escape` | Closes the sheet and returns focus to the trigger. |
+
+## Accessibility
+
+Built on Radix Dialog, so it has `role="dialog"`, `aria-modal`, a focus trap and labelling through `SheetTitle` and `SheetDescription`. Always include a `SheetTitle`.
+
+## Motion
+
+The panel slides in from its `side` on the **gentle** spring while the overlay fades. The panel has a hidden bleed past the screen edge, so the spring's small overshoot never reveals a gap. Exit springs out the same way and can be interrupted by reopening. With reduced motion both are instant.
+
+## Notes for AI
+
+- Put scrolling content in an inner `div` with `overflow-y-auto`, not on `SheetContent` itself, so the edge bleed stays hidden.
+- Don't add `translate-*` or `transition-all` classes to `SheetContent`. Motion owns its transform.
+
+## Source
+
+<RegistrySource path="kinematic/ui/sheet.tsx" title="components/ui/sheet.tsx" />

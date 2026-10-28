@@ -1,0 +1,31 @@
+import { loader } from "fumadocs-core/source"
+import { pageSchema } from "fumadocs-core/source/schema"
+import { defineDocs } from "fumadocs-mdx/macro"
+import { z } from "zod"
+
+const docs = defineDocs({
+  dir: "content/docs",
+  docs: {
+    schema: pageSchema.extend({
+      registry: z.string().optional(),
+      fancy: z.boolean().optional(),
+    }),
+    postprocess: {
+      includeProcessedMarkdown: true,
+    },
+  },
+})
+
+export const source = loader({
+  baseUrl: "/docs",
+  source: docs.toFumadocsSource(),
+})
+
+export type DocsPage = NonNullable<ReturnType<typeof source.getPage>>
+
+export function getFancyUrls() {
+  return source
+    .getPages()
+    .filter((page) => page.data.fancy)
+    .map((page) => page.url)
+}

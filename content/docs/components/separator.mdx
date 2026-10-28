@@ -1,0 +1,61 @@
+---
+title: Separator
+description: A thin horizontal or vertical rule that divides content.
+registry: separator
+---
+
+<ComponentPreview name="separator" />
+
+## When to use
+
+- Dividing groups in a list, a toolbar or a menu bar.
+- Separating inline items like links in a footer.
+
+## When not to use
+
+- **Creating space.** Use gap or margin instead.
+- **Dividers in a dropdown.** Use `DropdownMenuSeparator` from [Dropdown Menu](/docs/components/dropdown-menu).
+
+## Installation
+
+<AddCommand slug="separator" />
+
+## Usage
+
+```tsx
+import { Separator } from "@/components/ui/separator"
+
+<Separator className="my-4" />
+
+<div className="flex h-5 items-center gap-4">
+  <span>Docs</span>
+  <Separator orientation="vertical" />
+  <span>Changelog</span>
+</div>
+```
+
+## API Reference
+
+### Separator
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `orientation` | `"horizontal" \| "vertical"` | `"horizontal"` | Direction of the rule. |
+| `decorative` | `boolean` | `true` | When `true`, hidden from assistive tech. Set `false` for a semantic separator. |
+
+## Accessibility
+
+Built on Radix Separator. Decorative separators render with `role="none"`. Non-decorative ones get `role="separator"` and `aria-orientation`.
+
+## Motion
+
+None.
+
+## Notes for AI
+
+- A vertical separator needs a parent with a set height, like `h-5`, or it collapses.
+- Keep `decorative` on unless the division is meaningful to screen reader users.
+
+## Source
+
+<RegistrySource path="kinematic/ui/separator.tsx" title="components/ui/separator.tsx" />

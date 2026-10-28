@@ -1,0 +1,72 @@
+---
+title: Toggle
+description: A two-state button that presses in with a snappy spring, for on/off tools like bold or bookmark.
+registry: toggle
+---
+
+<ComponentPreview name="toggle" />
+
+## When to use
+
+- Toolbar actions that stay on or off, such as bold, italic or mute.
+- A single "favorite" or "bookmark" control.
+
+## When not to use
+
+- **Several related toggles.** Use a [Toggle Group](/docs/components/toggle-group).
+- **Settings that apply immediately in a form.** Use a [Switch](/docs/components/switch).
+- **One-off actions.** Use a [Button](/docs/components/button).
+
+## Installation
+
+<AddCommand slug="toggle" />
+
+## Usage
+
+```tsx
+import { Bold } from "lucide-react"
+
+import { Toggle } from "@/components/ui/toggle"
+
+<Toggle aria-label="Toggle bold">
+  <Bold />
+</Toggle>
+```
+
+## API Reference
+
+### Toggle
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `pressed` | `boolean` | | Controlled pressed state. |
+| `defaultPressed` | `boolean` | `false` | Initial state when uncontrolled. |
+| `onPressedChange` | `(pressed: boolean) => void` | | Called when the state changes. |
+| `variant` | `"default" \| "outline"` | `"default"` | Visual style. |
+| `size` | `"default" \| "sm" \| "lg"` | `"default"` | Height and padding. |
+| `disabled` | `boolean` | `false` | Blocks interaction. |
+
+Also exported: `toggleVariants`, for styling other elements like a toggle.
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| `Space` / `Enter` | Toggles the pressed state. |
+
+## Accessibility
+
+Built on Radix Toggle, which renders a `button` with `aria-pressed` and `data-state="on"` or `"off"`. Icon-only toggles need an `aria-label`. Do not change the label when the state changes; `aria-pressed` already reports it.
+
+## Motion
+
+The button scales down slightly on press with the **snappy** spring, like [Button](/docs/components/button). The pressed background fades through a short color transition. Instant with reduced motion.
+
+## Notes for AI
+
+- Keep the `aria-label` stable, such as "Bold". Do not switch it to "Unbold" when pressed.
+- For a group of toggles where only one can be on, use `ToggleGroup type="single"` instead of wiring toggles together.
+
+## Source
+
+<RegistrySource path="kinematic/ui/toggle.tsx" title="components/ui/toggle.tsx" />
