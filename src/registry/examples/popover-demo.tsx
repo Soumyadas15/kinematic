@@ -12,7 +12,6 @@ import {
   PopoverTitle,
   PopoverTrigger,
 } from "@/registry/kinematic/ui/popover"
-import { Switch } from "@/registry/kinematic/ui/switch"
 
 const people = [
   { name: "Maya Chen", email: "maya@studio.co", role: "Owner" },
@@ -67,7 +66,13 @@ export default function PopoverDemo() {
           <label htmlFor="link-access" className="text-sm">
             Anyone with the link can view
           </label>
-          <Switch id="link-access" checked={linkAccess} onCheckedChange={setLinkAccess} />
+          <input
+            id="link-access"
+            type="checkbox"
+            checked={linkAccess}
+            onChange={(event) => setLinkAccess(event.target.checked)}
+            className="size-4 accent-foreground"
+          />
         </div>
         <Button variant="secondary" disabled={!linkAccess}>
           <Link2 />

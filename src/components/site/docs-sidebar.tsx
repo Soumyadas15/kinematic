@@ -7,20 +7,12 @@ import { AnimatePresence, motion } from "motion/react"
 import { ChevronDown, Search, X } from "lucide-react"
 import type * as PageTree from "fumadocs-core/page-tree"
 
-import {
-  filterByView,
-  filterSections,
-  initialView,
-  toSections,
-  type NavSection,
-  type SidebarView,
-} from "@/lib/page-tree"
+import { filterSections, toSections, type NavSection } from "@/lib/page-tree"
 import { useSpringPreset } from "@/registry/kinematic/lib/motion"
 import {
   HighlightGroup,
   HighlightItem,
 } from "@/registry/kinematic/ui/fluid-highlight"
-import { Tabs, TabsList, TabsTrigger } from "@/registry/kinematic/ui/tabs"
 
 function SidebarFilter({
   value,
@@ -125,44 +117,6 @@ function SectionLinks({
   )
 }
 
-function ViewTabs({
-  value,
-  onChange,
-  counts,
-}: {
-  value: SidebarView
-  onChange: (view: SidebarView) => void
-  counts: Record<SidebarView, number>
-}) {
-  const views: { value: SidebarView; label: string }[] = [
-    { value: "fancy", label: "Fancy" },
-    { value: "all", label: "All" },
-  ]
-
-  return (
-    <Tabs value={value} onValueChange={(next) => onChange(next as SidebarView)}>
-      <TabsList className="w-full [&>[data-slot=highlight-group]]:w-full">
-        {views.map((view) => (
-          <TabsTrigger key={view.value} value={view.value} className="flex-1">
-            {view.label}
-            <span className="font-mono text-[10px] tabular-nums text-muted-foreground">
-              {counts[view.value]}
-            </span>
-          </TabsTrigger>
-        ))}
-      </TabsList>
-    </Tabs>
-  )
-}
-
-function countComponents(sections: NavSection[]) {
-  return sections.reduce(
-    (total, section) =>
-      total + section.items.filter((item) => item.url.startsWith("/docs/components/")).length,
-    0
-  )
-}
-
 function useCollapsed() {
   const [collapsed, setCollapsed] = React.useState<Record<string, boolean>>({})
   const toggle = (title: string) =>
@@ -172,30 +126,21 @@ function useCollapsed() {
 
 export function DocsSidebar({
   tree,
-  fancy,
   onNavigate,
 }: {
   tree: PageTree.Root
-  fancy: string[]
   onNavigate?: () => void
 }) {
   const pathname = usePathname()
-  const fancySet = React.useMemo(() => new Set(fancy), [fancy])
-  const [view, setView] = React.useState<SidebarView>(() => initialView(pathname, fancySet))
   const [query, setQuery] = React.useState("")
   const { collapsed, toggle } = useCollapsed()
   const transition = useSpringPreset("smooth")
-  const all = toSections(tree.children)
-  const counts = { fancy: fancySet.size, all: countComponents(all) }
-  const sections = filterSections(filterByView(all, view, fancySet), query)
+  const sections = filterSections(toSections(tree.children), query)
   const filtering = query.trim().length > 0
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex flex-col gap-2">
-        <SidebarFilter value={query} onChange={setQuery} />
-        <ViewTabs value={view} onChange={setView} counts={counts} />
-      </div>
+      <SidebarFilter value={query} onChange={setQuery} />
       <HighlightGroup className="flex flex-col gap-4" highlightClassName="bg-muted">
         {sections.length === 0 && (
           <p className="px-2.5 text-sm text-muted-foreground">No pages match.</p>

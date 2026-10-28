@@ -8,7 +8,6 @@ const docs = defineDocs({
   docs: {
     schema: pageSchema.extend({
       registry: z.string().optional(),
-      fancy: z.boolean().optional(),
     }),
     postprocess: {
       includeProcessedMarkdown: true,
@@ -23,9 +22,3 @@ export const source = loader({
 
 export type DocsPage = NonNullable<ReturnType<typeof source.getPage>>
 
-export function getFancyUrls() {
-  return source
-    .getPages()
-    .filter((page) => page.data.fancy)
-    .map((page) => page.url)
-}

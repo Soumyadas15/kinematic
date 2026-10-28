@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "shadcn build && next build",
+    "build": "pnpm registry:build && next build",
     "start": "next start",
     "lint": "eslint",
-    "registry:build": "shadcn build",
+    "registry:build": "rm -rf public/r && shadcn build",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

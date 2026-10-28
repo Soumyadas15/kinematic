@@ -4,7 +4,7 @@ import { MainNav } from "@/components/site/main-nav"
 import { MobileNav } from "@/components/site/mobile-nav"
 import { ThemeToggle } from "@/components/site/theme-toggle"
 import { site } from "@/config/site"
-import { getFancyUrls, source } from "@/lib/source"
+import { source } from "@/lib/source"
 import { flattenTree } from "fumadocs-core/page-tree"
 import { Button } from "@/registry/kinematic/ui/button"
 
@@ -26,7 +26,7 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur-lg">
       <div className="mx-auto flex h-14 w-full max-w-screen-2xl items-center gap-4 px-4 md:px-6">
-        <MobileNav tree={tree} fancy={getFancyUrls()} />
+        <MobileNav tree={tree} />
         <Logo />
         <MainNav />
         <div className="ml-auto flex items-center gap-1.5">

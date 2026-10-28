@@ -1,6 +1,6 @@
 ---
 title: Popover
-description: A floating panel anchored to its trigger that springs out from the trigger's side and settles back the same way.
+description: The trigger grows into the panel. One surface opens out of the button you clicked and folds back into it.
 registry: popover
 ---
 
@@ -84,7 +84,7 @@ Built on Radix Popover. The trigger gets `aria-expanded`, `aria-controls` and `a
 
 ## Motion
 
-The panel scales up from the edge nearest its trigger, using Radix's transform-origin variable, with the **snappy** spring. It exits with the same spring, so opening and closing quickly never jumps. If the popover flips to another side, the origin flips with it. With reduced motion it appears and disappears instantly.
+The panel covers its trigger and grows out of it. It's laid out at full size from the start, and a mask animates from the trigger's exact shape and corner radius to the panel's, so text is revealed rather than stretched. A copy of the trigger fades out as the panel's content fades in, and closing runs the same morph in reverse back into the button. If there's no room below, Radix flips the panel above and the morph grows from the trigger's new corner. The shape uses Kinematic's **morphIn** and **morphOut** eases. With reduced motion, it opens and closes instantly.
 
 ## Notes for AI
 

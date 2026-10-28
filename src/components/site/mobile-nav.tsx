@@ -9,7 +9,7 @@ import { DocsSidebar } from "@/components/site/docs-sidebar"
 import { useSpringPreset } from "@/registry/kinematic/lib/motion"
 import { Button } from "@/registry/kinematic/ui/button"
 
-export function MobileNav({ tree, fancy }: { tree: PageTree.Root; fancy: string[] }) {
+export function MobileNav({ tree }: { tree: PageTree.Root }) {
   const [open, setOpen] = React.useState(false)
   const transition = useSpringPreset("smooth")
 
@@ -33,7 +33,7 @@ export function MobileNav({ tree, fancy }: { tree: PageTree.Root; fancy: string[
             exit={{ opacity: 0, y: -8 }}
             transition={transition}
           >
-            <DocsSidebar tree={tree} fancy={fancy} onNavigate={() => setOpen(false)} />
+            <DocsSidebar tree={tree} onNavigate={() => setOpen(false)} />
           </motion.div>
         )}
       </AnimatePresence>

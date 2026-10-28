@@ -35,22 +35,3 @@ export function filterSections(sections: NavSection[], query: string) {
     .filter((section) => section.items.length > 0)
 }
 
-export type SidebarView = "fancy" | "all"
-
-function isComponentPage(url: string) {
-  return url.startsWith("/docs/components/")
-}
-
-export function filterByView(sections: NavSection[], view: SidebarView, fancy: Set<string>) {
-  if (view === "all") return sections
-  return sections
-    .map((section) => ({
-      ...section,
-      items: section.items.filter((item) => !isComponentPage(item.url) || fancy.has(item.url)),
-    }))
-    .filter((section) => section.items.length > 0)
-}
-
-export function initialView(pathname: string, fancy: Set<string>): SidebarView {
-  return isComponentPage(pathname) && !fancy.has(pathname) ? "all" : "fancy"
-}

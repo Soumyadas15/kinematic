@@ -12,11 +12,14 @@ export const springs = {
 export type SpringName = keyof typeof springs
 
 const easeOut = [0.22, 1, 0.36, 1] as const
+const easeShape = [0.4, 0, 0.2, 1] as const
 
 export const eases = {
   quick: { type: "tween", duration: 0.2, ease: easeOut },
   base: { type: "tween", duration: 0.32, ease: easeOut },
   slow: { type: "tween", duration: 0.45, ease: easeOut },
+  morphIn: { type: "tween", duration: 0.4, ease: easeShape },
+  morphOut: { type: "tween", duration: 0.34, ease: easeShape },
 } as const satisfies Record<string, Transition>
 
 export type EaseName = keyof typeof eases
