@@ -89,8 +89,13 @@ export function StageToolbar({
   )
 }
 
+function useClearOnLeave() {
+  React.useEffect(() => () => activity.clear(), [])
+}
+
 export function Stage({ settings, overlay }: { settings: StageSettings; overlay?: React.ReactNode }) {
   const hasActivities = useHasActivities()
+  useClearOnLeave()
   return (
     <MotionSpeedProvider speed={settings.speed}>
       <div

@@ -10,9 +10,9 @@ export const metadata: Metadata = {
 
 export default function PlaygroundPage() {
   return (
-    <main className="mx-auto w-full max-w-6xl px-6 pb-16">
+    <main className="mx-auto flex min-h-svh w-full max-w-6xl flex-col px-6">
       <HomeHeader section="Playground" />
-      <div className="pt-6">
+      <div className="flex flex-1 flex-col justify-center py-8">
         <ActivityPlayground />
       </div>
     </main>

@@ -55,6 +55,7 @@ function ScenarioPicker({
 }
 
 export default function ActivityDemo() {
+  React.useEffect(() => () => activity.clear(), [])
   const [scenario, setScenario] = React.useState<ScenarioName>("import")
   const current = scenarios.find((entry) => entry.value === scenario) ?? scenarios[0]
 
