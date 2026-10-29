@@ -8,13 +8,10 @@ const importRewrites: [RegExp, string][] = [
 ]
 
 function toConsumerImports(source: string) {
-  return importRewrites.reduce(
-    (code, [pattern, replacement]) => code.replace(pattern, replacement),
-    source
-  )
+  return importRewrites.reduce((code, [pattern, replacement]) => code.replace(pattern, replacement), source)
 }
 
-export async function readRegistryFile(relativePath: string) {
+async function readRegistryFile(relativePath: string) {
   "use cache"
   const file = path.join(process.cwd(), "src", "registry", relativePath)
   const source = await readFile(file, "utf8")

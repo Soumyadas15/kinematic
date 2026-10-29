@@ -3,10 +3,9 @@ import type { MDXComponents } from "mdx/types"
 
 import { CodeFrame } from "@/components/site/code-frame"
 import { ComponentPreview } from "@/components/site/component-preview"
-import { Card, Cards, RegistrySource, Step, Steps } from "@/components/site/docs-blocks"
+import { Step, Steps } from "@/components/site/docs-blocks"
 import { Heading } from "@/components/site/heading"
-import { AddCommand, InstallCommand } from "@/components/site/install-command"
-import { SpringVisualizer } from "@/components/site/spring-visualizer"
+import { InstallCommand } from "@/components/site/install-command"
 
 function MdxLink({ href = "", ...props }: React.ComponentProps<"a">) {
   if (href.startsWith("/") || href.startsWith("#")) {
@@ -27,20 +26,13 @@ export function getMDXComponents(components?: MDXComponents) {
         <table {...props} />
       </div>
     ),
-    Cards,
-    Card,
     Steps,
     Step,
     InstallCommand,
-    AddCommand,
     ComponentPreview,
-    RegistrySource,
-    SpringVisualizer,
     ...components,
   } satisfies MDXComponents
 }
-
-export const useMDXComponents = getMDXComponents
 
 declare global {
   type MDXProvidedComponents = ReturnType<typeof getMDXComponents>

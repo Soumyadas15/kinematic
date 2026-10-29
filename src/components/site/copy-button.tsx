@@ -6,7 +6,7 @@ import { Check, Copy } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { useSpringPreset } from "@/registry/kinematic/lib/motion"
-import { Button } from "@/registry/kinematic/ui/button"
+import { Button } from "@/components/ui/button"
 
 function useCopied(resetAfter = 1600) {
   const [copied, setCopied] = React.useState(false)
@@ -25,13 +25,7 @@ function useCopied(resetAfter = 1600) {
   return { copied, copy }
 }
 
-export function CopyButton({
-  value,
-  className,
-}: {
-  value: string | (() => string)
-  className?: string
-}) {
+export function CopyButton({ value, className }: { value: string | (() => string); className?: string }) {
   const { copied, copy } = useCopied()
   const transition = useSpringPreset("snappy")
 

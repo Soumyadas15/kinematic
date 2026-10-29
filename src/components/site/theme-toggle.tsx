@@ -5,7 +5,7 @@ import { Moon, Sun } from "lucide-react"
 
 import { setTheme, useTheme } from "@/lib/theme"
 import { useSpringPreset } from "@/registry/kinematic/lib/motion"
-import { Button } from "@/registry/kinematic/ui/button"
+import { Button } from "@/components/ui/button"
 
 export function ThemeToggle() {
   const theme = useTheme()

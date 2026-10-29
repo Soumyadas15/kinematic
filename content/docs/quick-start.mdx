@@ -1,0 +1,57 @@
+---
+title: Quick start
+description: Install Activity and show your first one.
+---
+
+<Steps>
+<Step title="Install">
+
+In a project that already uses shadcn/ui, add the registry once, then the component.
+
+<InstallCommand args="registry add @kinematic=https://kinematic.design/r/{name}.json" />
+
+<InstallCommand args="add @kinematic/activity" />
+
+</Step>
+<Step title="Add the viewport">
+
+Render it once, near the root of your app. It's where every activity appears.
+
+```tsx title="app/layout.tsx"
+import { ActivityViewport } from "@/components/ui/activity"
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body>
+        {children}
+        <ActivityViewport layout="single" />
+      </body>
+    </html>
+  )
+}
+```
+
+</Step>
+<Step title="Start one">
+
+Call it from anywhere, even outside React.
+
+```tsx
+import { activity } from "@/components/ui/activity"
+
+activity.track({
+  title: `Uploading ${files.length} files`,
+  items: files.map((file) => ({
+    id: file.name,
+    label: file.name,
+    run: (progress) => upload(file, { onProgress: progress }),
+  })),
+  outcome: () => ({ label: "Files ready", action: { label: "Open", onClick: openFiles } }),
+})
+```
+
+</Step>
+</Steps>
+
+That's it. Click the pill to open it. From here, [Activity](/docs/activity) covers the other kinds and how to build your own.

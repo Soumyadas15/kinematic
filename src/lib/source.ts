@@ -21,4 +21,3 @@ export const source = loader({
 })
 
 export type DocsPage = NonNullable<ReturnType<typeof source.getPage>>
-

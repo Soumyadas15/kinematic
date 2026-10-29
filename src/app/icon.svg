@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="3 3 26 26">
+  <style>
+    .from { stop-color: #71717a }
+    .to { stop-color: #0a0a0a }
+    @media (prefers-color-scheme: dark) {
+      .from { stop-color: #fafafa }
+      .to { stop-color: #a1a1aa }
+    }
+  </style>
+  <defs>
+    <linearGradient id="mark" x1="3" y1="3" x2="29" y2="29" gradientUnits="userSpaceOnUse">
+      <stop offset="0" class="from" />
+      <stop offset="1" class="to" />
+    </linearGradient>
+  </defs>
+  <path fill="url(#mark)" fill-rule="evenodd" d="M11 3h10a8 8 0 0 1 8 8v10a8 8 0 0 1-8 8H11a8 8 0 0 1-8-8V11a8 8 0 0 1 8-8ZM12.5 7.5h7a2.5 2.5 0 0 1 0 5h-7a2.5 2.5 0 0 1 0-5Z" />
+</svg>

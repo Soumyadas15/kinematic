@@ -5,6 +5,11 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --color-activity: var(--activity-background, var(--popover));
+  --color-activity-foreground: var(--activity-foreground, var(--popover-foreground));
+  --color-activity-muted: var(--activity-muted, var(--muted));
+  --color-activity-muted-foreground: var(--activity-muted-foreground, var(--muted-foreground));
+  --color-activity-border: var(--activity-border, var(--border));
   --color-background: var(--background);
   --color-code: var(--code);
   --color-foreground: var(--foreground);
@@ -150,15 +155,6 @@
     color: var(--shiki-dark);
   }
 
-  .preview-canvas {
-    background-color: var(--background);
-    background-image: radial-gradient(
-      color-mix(in oklch, var(--foreground) 9%, transparent) 1px,
-      transparent 1px
-    );
-    background-size: 16px 16px;
-  }
-
   .steps {
     counter-reset: step;
   }
@@ -179,69 +175,6 @@
     font-family: var(--font-mono);
     font-size: 0.75rem;
     color: var(--muted-foreground);
-  }
-}
-
-@layer components {
-  .dot-field {
-    --spot-x: 50%;
-    --spot-y: 0px;
-    --spot-opacity: 0;
-    --dot: color-mix(in oklch, var(--foreground) 13%, transparent);
-    --dot-strong: color-mix(in oklch, var(--foreground) 45%, transparent);
-  }
-
-  .dot-field-base,
-  .dot-field-spot {
-    background-size: 22px 22px;
-    background-position: center top;
-  }
-
-  .dot-field-base {
-    background-image: radial-gradient(var(--dot) 1px, transparent 1.4px);
-    mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, black 20%, transparent 75%);
-  }
-
-  .dot-field-spot {
-    background-image: radial-gradient(var(--dot-strong) 1px, transparent 1.4px);
-    mask-image: radial-gradient(220px circle at var(--spot-x) var(--spot-y), black, transparent 75%);
-    opacity: var(--spot-opacity);
-    transition: opacity 400ms ease;
-  }
-
-  .spotlight-card::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    background: radial-gradient(
-      420px circle at var(--spot-x, 50%) var(--spot-y, 50%),
-      color-mix(in oklch, var(--foreground) 6%, transparent),
-      transparent 60%
-    );
-    opacity: 0;
-    transition: opacity 300ms ease;
-    pointer-events: none;
-  }
-
-  .spotlight-card:hover::before {
-    opacity: 1;
-  }
-
-  .stage-frame {
-    box-shadow:
-      0 0 0 1px color-mix(in oklch, var(--foreground) 3%, transparent),
-      0 24px 80px -24px color-mix(in oklch, var(--foreground) 22%, transparent),
-      0 8px 24px -12px color-mix(in oklch, var(--foreground) 12%, transparent);
-  }
-
-  .hero-glow {
-    background: radial-gradient(
-      ellipse 50% 50% at 50% 50%,
-      color-mix(in oklch, var(--foreground) 9%, transparent),
-      transparent 70%
-    );
-    filter: blur(40px);
   }
 }
 

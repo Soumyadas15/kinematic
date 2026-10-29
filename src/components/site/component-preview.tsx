@@ -1,15 +1,10 @@
 import { examples, type ExampleName } from "@/registry/examples"
-import { readExampleSource } from "@/lib/registry-files"
-import { CodeBlock } from "@/components/site/code-block"
-import { PreviewShell } from "@/components/site/preview-shell"
 
-export async function ComponentPreview({ name }: { name: ExampleName }) {
+export function ComponentPreview({ name }: { name: ExampleName }) {
   const Example = examples[name]
-  const source = await readExampleSource(name)
-
   return (
-    <PreviewShell code={<CodeBlock code={source} />}>
+    <div className="not-prose relative my-8 overflow-hidden rounded-[28px] bg-muted/60 p-4 dark:bg-muted/30">
       <Example />
-    </PreviewShell>
+    </div>
   )
 }

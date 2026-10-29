@@ -1,26 +1,19 @@
-import Link from "next/link"
+import * as React from "react"
 
-import { site } from "@/config/site"
+const MARK_PATH =
+  "M11 3h10a8 8 0 0 1 8 8v10a8 8 0 0 1-8 8H11a8 8 0 0 1-8-8V11a8 8 0 0 1 8-8ZM12.5 7.5h7a2.5 2.5 0 0 1 0 5h-7a2.5 2.5 0 0 1 0-5Z"
 
 export function LogoMark({ className }: { className?: string }) {
+  const gradientId = React.useId()
   return (
-    <svg viewBox="0 0 24 24" fill="none" aria-hidden className={className}>
-      <rect width="24" height="24" rx="7" className="fill-foreground" />
-      <path
-        d="M8 6.5v11M8 12c3.5 0 4.5-5.5 8-5.5M8 12c3.5 0 4.5 5.5 8 5.5"
-        className="stroke-background"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
+    <svg viewBox="3 3 26 26" aria-hidden className={className}>
+      <defs>
+        <linearGradient id={gradientId} x1="3" y1="3" x2="29" y2="29" gradientUnits="userSpaceOnUse">
+          <stop offset="0" className="[stop-color:#71717a] dark:[stop-color:#fafafa]" />
+          <stop offset="1" className="[stop-color:#0a0a0a] dark:[stop-color:#a1a1aa]" />
+        </linearGradient>
+      </defs>
+      <path d={MARK_PATH} fillRule="evenodd" fill={`url(#${gradientId})`} />
     </svg>
-  )
-}
-
-export function Logo() {
-  return (
-    <Link href="/" className="flex items-center gap-2 font-semibold tracking-tight">
-      <LogoMark className="size-6" />
-      {site.name}
-    </Link>
   )
 }

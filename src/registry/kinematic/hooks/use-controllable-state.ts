@@ -8,11 +8,7 @@ type ControllableStateOptions<T> = {
   onChange?: (value: T) => void
 }
 
-export function useControllableState<T>({
-  value,
-  defaultValue,
-  onChange,
-}: ControllableStateOptions<T>) {
+export function useControllableState<T>({ value, defaultValue, onChange }: ControllableStateOptions<T>) {
   const [inner, setInner] = React.useState(defaultValue)
   const isControlled = value !== undefined
   const current = isControlled ? value : inner

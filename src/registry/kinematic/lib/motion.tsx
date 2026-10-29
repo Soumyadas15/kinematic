@@ -28,18 +28,8 @@ const instant: Transition = { duration: 0 }
 
 const MotionSpeedContext = React.createContext(1)
 
-export function MotionSpeedProvider({
-  speed,
-  children,
-}: {
-  speed: number
-  children: React.ReactNode
-}) {
-  return (
-    <MotionSpeedContext.Provider value={speed}>
-      {children}
-    </MotionSpeedContext.Provider>
-  )
+export function MotionSpeedProvider({ speed, children }: { speed: number; children: React.ReactNode }) {
+  return <MotionSpeedContext.Provider value={speed}>{children}</MotionSpeedContext.Provider>
 }
 
 export function useSpringPreset(name: SpringName): Transition {

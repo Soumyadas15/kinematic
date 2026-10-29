@@ -1,0 +1,340 @@
+---
+title: Activity
+description: One surface that shows what's happening. Compact when you glance, open when you look, and it morphs between whatever is running.
+registry: activity
+---
+
+<ComponentPreview name="activity" />
+
+## How it works
+
+Every activity has two shapes. **Compact** is a small pill: an icon, a line of text, maybe a control. **Expanded** is the full card. Click the pill to open it. Click anywhere outside, press Escape or use the arrow to close it.
+
+Anything that appears in both shapes, like a file's icon or a song's cover, keeps its identity. It travels from the pill into the card instead of disappearing and reappearing. That continuity is the whole idea.
+
+Activities are shown by one `ActivityViewport`, and you start them from anywhere with the `activity` object or one of the ready-made helpers below.
+
+## Layouts
+
+Pass `layout` to the viewport to choose how several activities share the screen.
+
+```tsx
+<ActivityViewport layout="single" />
+```
+
+- **`single`**: one pill at a time. Start something new and the pill morphs into it. The previous one keeps running out of sight, so music keeps playing, and it comes back when you dismiss the current one.
+- **`stack`**: each activity gets its own pill, stacked toward the nearest edge. This is the default.
+- **`island`**: the activity you're focused on is the full pill, and the rest shrink into round bubbles beside it. Click a bubble to swap it in. Past three bubbles, a `+N` bubble holds the rest.
+
+`position` places the viewport: `bottom-right` (default), `bottom-center`, `bottom-left`, `top-right`, `top-center` or `top-left`.
+
+## Tasks
+
+Tasks are work with steps: uploads, exports, builds, an agent's run. Each item shows its own progress, and one failing doesn't stop the rest.
+
+```tsx
+activity.track({
+  title: "Importing 3 documents",
+  items: files.map((file) => ({
+    id: file.name,
+    label: file.name,
+    meta: formatSize(file.size),
+    icon: <FileText />,
+    run: (progress) => upload(file, { onProgress: progress }),
+  })),
+  outcome: (task) => ({
+    label: `${task.items.length} documents ready`,
+    action: { label: "Open", onClick: openDocuments },
+  }),
+})
+```
+
+- `run(progress)` returns a promise. Call `progress` with a number from 0 to 1 as it goes.
+- If `run` throws, that item fails with the error's message and gets a Retry button. Collapsed, the pill reads "2 ready · 1 needs attention".
+- When every item is done, the activity settles into `outcome`, folds back into a pill, and shows its action.
+
+For an agent, pass `sequential` so steps run one after another. A failed step pauses the rest until it's retried.
+
+```tsx
+activity.track({
+  title: "Researching usage pricing",
+  sequential: true,
+  items: [
+    { id: "search", label: "Searching the web", icon: <Search />, run: search },
+    { id: "read", label: "Reading 8 papers", icon: <BookOpen />, run: read },
+    { id: "write", label: "Writing the report", icon: <PenLine />, run: write },
+  ],
+  outcome: () => ({ label: "Report ready", action: { label: "Read", onClick: openReport } }),
+})
+```
+
+When progress arrives as events, from a websocket or an agent's stream, use `start` and update it yourself.
+
+```tsx
+const task = activity.start({ title: "Deploying", items: steps })
+
+task.progress("build", 0.4)
+task.complete("build")
+task.fail("check", { error: "1 type error", retry: rerunChecks })
+task.finish({ label: "Live", action: { label: "Visit", onClick: visit } })
+```
+
+## Music
+
+<InstallCommand args="add @kinematic/activity-player" />
+
+```tsx
+import { showPlayer } from "@/components/ui/activity-player"
+
+showPlayer({ src: "/song.mp3", title: "Afterglow", artist: "Kinematic FM", cover: "/cover.jpg" })
+```
+
+The pill shows the cover, the title and small level bars that follow the song. Open it for a waveform drawn from the audio itself, with seeking and ±10 second skips. Playback lives as long as the activity, so it keeps going while another one holds the pill.
+
+## Calls
+
+<InstallCommand args="add @kinematic/activity-call" />
+
+```tsx
+import { startCall } from "@/components/ui/activity-call"
+
+const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+const call = startCall({ name: "Ada", stream })
+
+agent.on("connected", () => call.connect())
+agent.on("level", (value) => call.setLevel("agent", value))
+agent.on("message", ({ role, text }) => call.say(role, text))
+agent.on("end", () => call.end())
+```
+
+Pass a microphone `stream` and the bars follow your voice. Give each call its own `id` if you run more than one. Feed the agent's level with `setLevel`. `say` streams a line into the transcript word by word. Mute and End are built in.
+
+### Gradient orb
+
+Without an `avatar`, the call shows a mesh gradient orb made from the caller's name. The same name always gets the same orb, and it slowly drifts while the agent speaks. It's its own registry item, so you can use it anywhere you need a default avatar.
+
+<InstallCommand args="add @kinematic/gradient-orb" />
+
+```tsx
+import { GradientOrb } from "@/components/ui/gradient-orb"
+
+<GradientOrb seed={user.email} className="size-10" />
+<GradientOrb seed="Ada" animated className="size-16" />
+```
+
+## Timers
+
+<InstallCommand args="add @kinematic/activity-timer" />
+
+```tsx
+import { startTimer } from "@/components/ui/activity-timer"
+
+const timer = startTimer({ label: "Focus", minutes: 25, onDone: notify })
+
+timer.pause()
+timer.resume()
+timer.add(5)
+```
+
+A ring empties in the pill. Open it and the digits roll as they count down.
+
+## Theming
+
+Activity has its own colour tokens. Each one falls back to your shadcn theme, so it matches your app out of the box. Override any of them and every activity follows.
+
+| Token | Used for | Falls back to |
+| --- | --- | --- |
+| `--activity-background` | The surface | `--popover` |
+| `--activity-foreground` | Text, icons and solid buttons | `--popover-foreground` |
+| `--activity-muted` | Tiles and soft fills | `--muted` |
+| `--activity-muted-foreground` | Secondary text | `--muted-foreground` |
+| `--activity-border` | The surface outline | `--border` |
+
+### Inverted
+
+For a surface that stands out from the page, dark on a light page and light on a dark one, use the built-in tone.
+
+```tsx
+<ActivityViewport tone="inverted" />
+```
+
+### Your own colours
+
+Set the tokens anywhere above the viewport: in your global CSS, on a wrapper, or right on the viewport.
+
+```css title="app/globals.css"
+:root {
+  --activity-background: oklch(0.21 0.03 265);
+  --activity-foreground: oklch(0.98 0 0);
+  --activity-muted: oklch(0.28 0.03 265);
+  --activity-muted-foreground: oklch(0.72 0.02 265);
+  --activity-border: oklch(0.3 0.03 265);
+}
+
+.dark {
+  --activity-background: oklch(0.97 0.01 265);
+  --activity-foreground: oklch(0.2 0.03 265);
+  --activity-muted: oklch(0.92 0.01 265);
+  --activity-muted-foreground: oklch(0.45 0.02 265);
+  --activity-border: oklch(0.88 0.01 265);
+}
+```
+
+Or scope them to one viewport with Tailwind:
+
+```tsx
+<ActivityViewport className="[--activity-background:var(--color-zinc-900)] [--activity-foreground:white]" />
+```
+
+The width comes from `--activity-width`, which defaults to `min(22rem, 100vw - 2rem)`.
+
+Inside your own activities, use the matching Tailwind colours so they follow the theme too: `bg-activity`, `text-activity-foreground`, `bg-activity-muted`, `text-activity-muted-foreground` and `border-activity-border`.
+
+## Build your own
+
+Every activity above is built from the same parts, and so is yours. Give two elements the same `name` in `ActivityShared` and they become one element that travels between shapes.
+
+```tsx
+import {
+  activity,
+  ActivityCollapse,
+  ActivityCompact,
+  ActivityExpanded,
+  ActivityGlyph,
+  ActivityReveal,
+  ActivityShared,
+  ActivityTrigger,
+} from "@/components/ui/activity"
+
+function Delivery() {
+  return (
+    <>
+      <ActivityGlyph label="Your order">
+        <ActivityShared name="icon" radius={18} className="size-9 bg-muted" />
+      </ActivityGlyph>
+      <ActivityCompact>
+        <ActivityTrigger>
+          <ActivityShared name="icon" radius={18} className="size-9 bg-muted" />
+          <ActivityShared name="eta" className="text-sm font-medium">4 min away</ActivityShared>
+        </ActivityTrigger>
+      </ActivityCompact>
+      <ActivityExpanded>
+        <div className="flex items-center gap-3">
+          <ActivityShared name="icon" radius={12} className="size-12 bg-muted" />
+          <ActivityShared name="eta" className="text-lg font-medium">4 min away</ActivityShared>
+          <ActivityCollapse />
+        </div>
+        <ActivityReveal>Your driver is two streets away.</ActivityReveal>
+      </ActivityExpanded>
+    </>
+  )
+}
+
+activity.show({ id: "delivery", view: Delivery })
+```
+
+| Part | What it does |
+| --- | --- |
+| `ActivityCompact` | The pill. Shown when the activity is closed. |
+| `ActivityExpanded` | The card. Shown when it's open. |
+| `ActivityShared` | An element that travels between shapes. Match them by `name`; `radius` lets the corners change on the way. |
+| `ActivityReveal` | Content that fades in once the card has settled. |
+| `ActivityGlyph` | What the activity shrinks to as a bubble in `island`. |
+| `ActivityTrigger` | Opens and closes it. |
+| `ActivityCollapse`, `ActivityDismiss` | Ready-made close and dismiss buttons. |
+
+For live data, `createActivityState` makes a small store you can update from outside React, and `useActivityState` reads it inside your view. `activity.show` returns a handle with `expand`, `collapse` and `dismiss`, and takes `onDismiss` to clean up.
+
+You can also render `<Activity>` inline, outside the viewport, with `expanded` and `onExpandedChange`.
+
+## API reference
+
+### ActivityViewport
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `layout` | `"stack" \| "single" \| "island"` | `"stack"` | How several activities share the screen. |
+| `position` | `"bottom-right" \| "bottom-center" \| "bottom-left" \| "top-right" \| "top-center" \| "top-left"` | `"bottom-right"` | Where activities appear. They grow away from this edge. |
+| `tone` | `"default" \| "inverted"` | `"default"` | `inverted` flips the surface against the page. |
+| `className` | `string` | | Extra classes, such as `absolute` to place it inside a container, or token overrides. |
+| `style` | `CSSProperties` | | Inline styles and token overrides. |
+
+### activity
+
+| Method | Returns | Description |
+| --- | --- | --- |
+| `track(options)` | `ActivityHandle` | Runs each item's `run`, tracks progress, adds Retry on failure and settles into `outcome`. |
+| `start(options)` | `ActivityHandle` | Shows a task you update yourself. |
+| `show({ id?, view, onDismiss? })` | `ActivityViewHandle` | Shows a custom activity. Reusing an `id` replaces it. |
+| `dismiss(id)` | `void` | Removes one activity. |
+| `clear()` | `void` | Removes every activity. |
+
+`track` options:
+
+| Option | Type | Description |
+| --- | --- | --- |
+| `title` | `string` | Shown while it runs. |
+| `items` | `{ id, label, meta?, icon?, run }[]` | `run(progress)` returns a promise. Call `progress` with 0 to 1. Throw to fail the item. |
+| `sequential` | `boolean` | Run items one after another. A failure pauses the rest until it's retried. |
+| `outcome` | `(task) => { label, action? }` | What it settles into once every item is done. |
+
+`ActivityHandle` has `progress(itemId, value)`, `complete(itemId)`, `fail(itemId, { error, retry? })`, `update(itemId, patch)`, `finish({ label, action? })`, `expand()`, `collapse()` and `dismiss()`. `ActivityViewHandle` has `expand()`, `collapse()` and `dismiss()`.
+
+### showPlayer
+
+| Option | Type | Description |
+| --- | --- | --- |
+| `src` | `string` | Audio URL. It's also decoded once to draw the waveform. |
+| `title`, `artist` | `string` | Shown in the pill and the card. |
+| `cover` | `string` | Optional cover image URL. |
+| `id` | `string` | Defaults to `"now-playing"`. |
+
+Returns the view handle plus `toggle()`, `pause()`, `seek(ratio)`, `skip(seconds)`, `setMuted(muted)` and `preview()`, which animates playback silently for demos.
+
+### startCall
+
+| Option | Type | Description |
+| --- | --- | --- |
+| `name` | `string` | Who you're talking to. |
+| `avatar` | `string` | Optional image URL. Initials are used otherwise. |
+| `stream` | `MediaStream` | Optional microphone stream. Its level drives the bars, and it's stopped when the call ends. |
+| `id` | `string` | Defaults to `"call"`. |
+| `onEnd` | `() => void` | Called when the call ends. |
+
+Returns the view handle plus `connect()`, `say(speaker, text)`, `setLevel(speaker, value)`, `mute(muted)`, `end()` and `isEnded()`. `speaker` is `"agent"` or `"user"`.
+
+### startTimer
+
+| Option | Type | Default | Description |
+| --- | --- | --- | --- |
+| `label` | `string` | `"Focus"` | Shown in the pill. |
+| `minutes` | `number` | `25` | Length of the countdown. |
+| `id` | `string` | `"timer"` | |
+| `onDone` | `() => void` | | Called once when it finishes. |
+
+Returns the view handle plus `pause()`, `resume()`, `add(minutes)` and `end()`.
+
+### GradientOrb
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `seed` | `string` | | Any string. It decides the colours and their layout, and doubles as the accessible label. |
+| `animated` | `boolean` | `false` | Slowly drifts the gradient. Paused for reduced motion. |
+| `className` | `string` | | Size it here, for example `size-10`. |
+
+`orbPalette(seed)` returns the generated colours if you want to reuse them elsewhere.
+
+### Parts
+
+| Part | Props |
+| --- | --- |
+| `Activity` | `expanded`, `defaultExpanded`, `onExpandedChange`, `onDismiss`, `closeOnOutsideClick` (default `true`), `className`. For using one inline, outside the viewport. |
+| `ActivityShared` | `name` (required), `text` to move without resizing (use it for any text that changes), `radius`, `className`, `style`. |
+| `ActivityReveal` | `delay` in seconds, `className`. |
+| `ActivityGlyph` | `label` (required), used for its accessible name as a bubble. |
+| `ActivityButton` | Every `button` prop, plus `variant` (`ghost`, `soft`, `solid`, `danger`) and `size` (`icon-sm`, `icon-md`, `icon-lg`, `sm`, `lg`). |
+| `ActivityProgress` | `value` from 0 to 1, `className`. |
+
+## Accessibility
+
+Each activity is a polite live region, so progress and results are announced without stealing focus. Status is never color alone: failures are written out with a Retry button, and "needs attention" comes with an icon. With reduced motion, shapes change instantly.

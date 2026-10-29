@@ -1,0 +1,6 @@
+.next
+.source
+node_modules
+public/r
+pnpm-lock.yaml
+*.mdx

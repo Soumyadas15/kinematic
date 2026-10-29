@@ -4,6 +4,13 @@ import { createMDX } from "fumadocs-mdx/next"
 const nextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
+  async redirects() {
+    return [
+      { source: "/docs/components/:slug*", destination: "/docs/activity", permanent: true },
+      { source: "/docs/installation", destination: "/docs/quick-start", permanent: true },
+      { source: "/docs/:page(motion|ai|changelog)", destination: "/docs", permanent: true },
+    ]
+  },
   async rewrites() {
     return [
       { source: "/docs.mdx", destination: "/llms.mdx" },

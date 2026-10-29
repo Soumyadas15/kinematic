@@ -4,7 +4,7 @@ import { useSyncExternalStore } from "react"
 
 import { THEME_STORAGE_KEY as STORAGE_KEY } from "@/lib/theme-script"
 
-export type Theme = "light" | "dark"
+type Theme = "light" | "dark"
 
 function readTheme(): Theme {
   return document.documentElement.classList.contains("dark") ? "dark" : "light"

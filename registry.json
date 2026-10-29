@@ -8,28 +8,10 @@
       "type": "registry:lib",
       "title": "Motion",
       "description": "Shared spring presets that respect reduced motion.",
-      "dependencies": [
-        "motion"
-      ],
+      "dependencies": ["motion"],
       "files": [
         {
           "path": "src/registry/kinematic/lib/motion.tsx",
-          "type": "registry:lib"
-        }
-      ]
-    },
-    {
-      "name": "morph",
-      "type": "registry:lib",
-      "title": "Morph",
-      "description": "Mask maths and hooks that let one surface grow out of another.",
-      "dependencies": [
-        "motion"
-      ],
-      "registryDependencies": [],
-      "files": [
-        {
-          "path": "src/registry/kinematic/lib/morph.ts",
           "type": "registry:lib"
         }
       ]
@@ -47,166 +29,96 @@
       ]
     },
     {
-      "name": "fluid-highlight",
+      "name": "activity",
       "type": "registry:ui",
-      "title": "Fluid Highlight",
-      "description": "One hover highlight per group that glides between items.",
-      "dependencies": [
-        "motion",
-        "radix-ui"
-      ],
-      "registryDependencies": [
-        "@kinematic/motion"
-      ],
+      "title": "Activity",
+      "description": "A live surface for anything that takes time or keeps going. Compact when you glance, expanded when you look, with elements that keep their identity across the morph.",
+      "dependencies": ["motion", "lucide-react"],
+      "registryDependencies": ["@kinematic/motion", "@kinematic/use-controllable-state"],
       "files": [
         {
-          "path": "src/registry/kinematic/ui/fluid-highlight.tsx",
+          "path": "src/registry/kinematic/ui/activity.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/kinematic/ui/activity-surface.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/kinematic/ui/activity-task.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/kinematic/lib/activity-store.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "src/registry/kinematic/lib/activity-audio.ts",
+          "type": "registry:lib"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "color-activity": "var(--activity-background, var(--popover))",
+          "color-activity-foreground": "var(--activity-foreground, var(--popover-foreground))",
+          "color-activity-muted": "var(--activity-muted, var(--muted))",
+          "color-activity-muted-foreground": "var(--activity-muted-foreground, var(--muted-foreground))",
+          "color-activity-border": "var(--activity-border, var(--border))"
+        }
+      }
+    },
+    {
+      "name": "activity-player",
+      "type": "registry:ui",
+      "title": "Activity Player",
+      "description": "A now-playing activity: cover art, a waveform from the real audio, live levels, and controls that grow out of the pill.",
+      "dependencies": ["motion", "lucide-react"],
+      "registryDependencies": ["@kinematic/activity"],
+      "files": [
+        {
+          "path": "src/registry/kinematic/ui/activity-player.tsx",
           "type": "registry:ui"
         }
       ]
     },
     {
-      "name": "button",
+      "name": "activity-timer",
       "type": "registry:ui",
-      "title": "Button",
-      "description": "A button with a spring press.",
-      "dependencies": [
-        "motion",
-        "radix-ui",
-        "class-variance-authority"
-      ],
-      "registryDependencies": [
-        "@kinematic/motion"
-      ],
+      "title": "Activity Timer",
+      "description": "A focus timer activity: a ring that empties in the pill and digits that roll when you open it.",
+      "dependencies": ["motion", "lucide-react"],
+      "registryDependencies": ["@kinematic/activity"],
       "files": [
         {
-          "path": "src/registry/kinematic/ui/button.tsx",
+          "path": "src/registry/kinematic/ui/activity-timer.tsx",
           "type": "registry:ui"
         }
       ]
     },
     {
-      "name": "tabs",
+      "name": "gradient-orb",
       "type": "registry:ui",
-      "title": "Tabs",
-      "description": "Tabs with a gliding hover highlight and a spring active indicator.",
-      "dependencies": [
-        "motion",
-        "radix-ui"
-      ],
-      "registryDependencies": [
-        "@kinematic/motion",
-        "@kinematic/use-controllable-state",
-        "@kinematic/fluid-highlight"
-      ],
+      "title": "Gradient Orb",
+      "description": "A mesh gradient orb generated from any string. The same string always gives the same orb.",
+      "dependencies": [],
+      "registryDependencies": [],
       "files": [
         {
-          "path": "src/registry/kinematic/ui/tabs.tsx",
+          "path": "src/registry/kinematic/ui/gradient-orb.tsx",
           "type": "registry:ui"
         }
       ]
     },
     {
-      "name": "dropdown-menu",
+      "name": "activity-call",
       "type": "registry:ui",
-      "title": "Dropdown Menu",
-      "description": "A menu that springs open from its trigger, with one highlight gliding between items.",
-      "dependencies": [
-        "motion",
-        "radix-ui"
-      ],
-      "registryDependencies": [
-        "@kinematic/motion",
-        "@kinematic/use-controllable-state",
-        "@kinematic/fluid-highlight"
-      ],
+      "title": "Activity Call",
+      "description": "A voice call activity: live levels from a microphone or your voice SDK, and a transcript that streams in word by word.",
+      "dependencies": ["motion", "lucide-react"],
+      "registryDependencies": ["@kinematic/activity", "@kinematic/gradient-orb"],
       "files": [
         {
-          "path": "src/registry/kinematic/ui/dropdown-menu.tsx",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "dialog",
-      "type": "registry:ui",
-      "title": "Dialog",
-      "description": "A modal window that springs in from slightly smaller and out of focus, then springs back out the same way, so quick open and close never jumps.",
-      "dependencies": [
-        "motion",
-        "radix-ui",
-        "lucide-react"
-      ],
-      "registryDependencies": [
-        "@kinematic/motion",
-        "@kinematic/use-controllable-state"
-      ],
-      "files": [
-        {
-          "path": "src/registry/kinematic/ui/dialog.tsx",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "popover",
-      "type": "registry:ui",
-      "title": "Popover",
-      "description": "The trigger grows into the panel: one surface opens out of the button you clicked and folds back into it.",
-      "dependencies": [
-        "motion",
-        "radix-ui"
-      ],
-      "registryDependencies": [
-        "@kinematic/motion",
-        "@kinematic/morph",
-        "@kinematic/use-controllable-state"
-      ],
-      "files": [
-        {
-          "path": "src/registry/kinematic/ui/popover.tsx",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "tooltip",
-      "type": "registry:ui",
-      "title": "Tooltip",
-      "description": "A short label that pops from its trigger and skips the delay when you move to the next one.",
-      "dependencies": [
-        "motion",
-        "radix-ui"
-      ],
-      "registryDependencies": [
-        "@kinematic/motion",
-        "@kinematic/use-controllable-state"
-      ],
-      "files": [
-        {
-          "path": "src/registry/kinematic/ui/tooltip.tsx",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "select",
-      "type": "registry:ui",
-      "title": "Select",
-      "description": "A form control for picking one value from a list, where the panel springs from the trigger and the highlight rests on the current choice.",
-      "dependencies": [
-        "motion",
-        "radix-ui",
-        "lucide-react"
-      ],
-      "registryDependencies": [
-        "@kinematic/motion",
-        "@kinematic/use-controllable-state",
-        "@kinematic/fluid-highlight"
-      ],
-      "files": [
-        {
-          "path": "src/registry/kinematic/ui/select.tsx",
+          "path": "src/registry/kinematic/ui/activity-call.tsx",
           "type": "registry:ui"
         }
       ]

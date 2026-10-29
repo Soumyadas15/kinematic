@@ -1,13 +1,7 @@
 "use client"
 
-import { site } from "@/config/site"
 import { CopyButton } from "@/components/site/copy-button"
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/registry/kinematic/ui/tabs"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 const runners = {
   pnpm: "pnpm dlx",
@@ -35,21 +29,11 @@ export function InstallCommand({ args }: { args: string }) {
         </TabsList>
       </div>
       {(Object.keys(runners) as Runner[]).map((runner) => (
-        <TabsContent
-          key={runner}
-          value={runner}
-          className="flex items-center justify-between gap-4 py-2 pr-2 pl-4"
-        >
-          <code className="overflow-x-auto font-mono text-[13px] whitespace-nowrap">
-            {commandFor(runner, args)}
-          </code>
+        <TabsContent key={runner} value={runner} className="flex items-center justify-between gap-4 py-2 pr-2 pl-4">
+          <code className="overflow-x-auto font-mono text-[13px] whitespace-nowrap">{commandFor(runner, args)}</code>
           <CopyButton value={commandFor(runner, args)} />
         </TabsContent>
       ))}
     </Tabs>
   )
-}
-
-export function AddCommand({ slug }: { slug: string }) {
-  return <InstallCommand args={`add ${site.registryNamespace}/${slug}`} />
 }
