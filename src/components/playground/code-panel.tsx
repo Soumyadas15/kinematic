@@ -2,7 +2,6 @@ import type { CatalogItem, Options } from "@/components/playground/catalog"
 import type { StageSettings } from "@/components/playground/stage"
 import { HighlightedCode } from "@/components/site/highlighted-code"
 import { InstallCommand } from "@/components/site/install-command"
-import { site } from "@/config/site"
 
 function viewportCode({ position, layout }: StageSettings) {
   const props = [
@@ -37,7 +36,7 @@ export function CodePanel({
   return (
     <div className="flex flex-col gap-5">
       <Step title="1. Install">
-        <InstallCommand args={`add ${site.registryNamespace}/${item.registry}`} />
+        <InstallCommand items={[item.registry]} />
       </Step>
       <Step title="2. Once, in your root layout">
         <HighlightedCode code={viewportCode(settings)} />

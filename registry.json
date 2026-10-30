@@ -34,7 +34,10 @@
       "title": "Activity",
       "description": "A live surface for anything that takes time or keeps going. Compact when you glance, expanded when you look, with elements that keep their identity across the morph.",
       "dependencies": ["motion", "lucide-react"],
-      "registryDependencies": ["@kinematic/motion", "@kinematic/use-controllable-state"],
+      "registryDependencies": [
+        "https://kinematic.design/r/motion.json",
+        "https://kinematic.design/r/use-controllable-state.json"
+      ],
       "files": [
         {
           "path": "src/registry/kinematic/ui/activity.tsx",
@@ -73,7 +76,7 @@
       "title": "Activity Player",
       "description": "A now-playing activity: cover art, a waveform from the real audio, live levels, and controls that grow out of the pill.",
       "dependencies": ["motion", "lucide-react"],
-      "registryDependencies": ["@kinematic/activity"],
+      "registryDependencies": ["https://kinematic.design/r/activity.json"],
       "files": [
         {
           "path": "src/registry/kinematic/ui/activity-player.tsx",
@@ -87,7 +90,7 @@
       "title": "Activity Timer",
       "description": "A focus timer activity: a ring that empties in the pill and digits that roll when you open it.",
       "dependencies": ["motion", "lucide-react"],
-      "registryDependencies": ["@kinematic/activity"],
+      "registryDependencies": ["https://kinematic.design/r/activity.json"],
       "files": [
         {
           "path": "src/registry/kinematic/ui/activity-timer.tsx",
@@ -115,7 +118,10 @@
       "title": "Activity Call",
       "description": "A voice call activity: live levels from a microphone or your voice SDK, and a transcript that streams in word by word.",
       "dependencies": ["motion", "lucide-react"],
-      "registryDependencies": ["@kinematic/activity", "@kinematic/gradient-orb"],
+      "registryDependencies": [
+        "https://kinematic.design/r/activity.json",
+        "https://kinematic.design/r/gradient-orb.json"
+      ],
       "files": [
         {
           "path": "src/registry/kinematic/ui/activity-call.tsx",

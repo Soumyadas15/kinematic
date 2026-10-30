@@ -17,6 +17,6 @@ export const site = {
   ],
   url: "https://kinematic.design",
   github: "https://github.com/Soumyadas15/kinematic",
-  registryNamespace: "@kinematic",
+  registry: { namespace: "@kinematic", url: "https://kinematic.design/r", listed: false },
   author: { name: "Saumya Das", url: "https://saumyadas.dev" },
 }

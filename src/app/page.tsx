@@ -9,6 +9,7 @@ import { CopyButton } from "@/components/site/copy-button"
 import { PageIntro } from "@/components/site/page-intro"
 import { JsonLd } from "@/components/site/json-ld"
 import { site } from "@/config/site"
+import { installCommand } from "@/lib/install"
 import { pageMetadata } from "@/lib/metadata"
 import { sourceCodeSchema, websiteSchema } from "@/lib/structured-data"
 
@@ -19,17 +20,15 @@ const LINKS = [
   { label: "Playground", href: "/playground" },
 ]
 
-const INSTALL_COMMAND = `npx shadcn add ${site.registryNamespace}/activity`
-
 function Hero() {
   return (
     <PageIntro title="Activity Component for React." tagline="Built for things that take a while.">
       <div className="flex max-w-full flex-wrap items-center gap-x-6 gap-y-3 text-sm">
         <span className="flex h-10 max-w-full min-w-0 items-center gap-0.5 rounded-full bg-muted pr-1 pl-4">
           <code className="min-w-0 overflow-hidden font-mono text-[13px] text-ellipsis whitespace-nowrap">
-            {INSTALL_COMMAND}
+            {installCommand}
           </code>
-          <CopyButton value={INSTALL_COMMAND} className="shrink-0" />
+          <CopyButton value={installCommand} className="shrink-0" />
         </span>
         {LINKS.map((link) => (
           <Link

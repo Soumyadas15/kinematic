@@ -81,7 +81,7 @@ task.finish({ label: "Live", action: { label: "Visit", onClick: visit } })
 
 ## Music
 
-<InstallCommand args="add @kinematic/activity-player" />
+<InstallCommand items={["activity-player"]} />
 
 ```tsx
 import { showPlayer } from "@/components/ui/activity-player"
@@ -93,7 +93,7 @@ The pill shows the cover, the title and small level bars that follow the song. O
 
 ## Calls
 
-<InstallCommand args="add @kinematic/activity-call" />
+<InstallCommand items={["activity-call"]} />
 
 ```tsx
 import { startCall } from "@/components/ui/activity-call"
@@ -113,7 +113,7 @@ Pass a microphone `stream` and the bars follow your voice. Give each call its ow
 
 Without an `avatar`, the call shows a mesh gradient orb made from the caller's name. The same name always gets the same orb, and it slowly drifts while the agent speaks. It's its own registry item, so you can use it anywhere you need a default avatar.
 
-<InstallCommand args="add @kinematic/gradient-orb" />
+<InstallCommand items={["gradient-orb"]} />
 
 ```tsx
 import { GradientOrb } from "@/components/ui/gradient-orb"
@@ -124,7 +124,7 @@ import { GradientOrb } from "@/components/ui/gradient-orb"
 
 ## Timers
 
-<InstallCommand args="add @kinematic/activity-timer" />
+<InstallCommand items={["activity-timer"]} />
 
 ```tsx
 import { startTimer } from "@/components/ui/activity-timer"
