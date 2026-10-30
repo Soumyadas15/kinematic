@@ -96,7 +96,7 @@ function Speaker({ speaker }: { speaker: string | null }) {
   )
 }
 
-export function MeetingNotch() {
+export function MeetingActivity() {
   const { dismiss } = useActivity()
   const [muted, setMuted] = React.useState(false)
   const { bars, speaker } = useVoice(muted)
@@ -179,6 +179,6 @@ export function MeetingNotch() {
   )
 }
 
-export function showMeetingNotch() {
-  return activity.show({ id: "meeting", view: MeetingNotch })
+export function showMeeting() {
+  return activity.show({ id: "meeting", view: MeetingActivity })
 }

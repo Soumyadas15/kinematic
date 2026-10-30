@@ -138,7 +138,7 @@ function Stat({ label, value }: { label: string; value: string }) {
   )
 }
 
-export function LiveStream() {
+export function StreamActivity() {
   const { dismiss } = useActivity()
   const stream = useStream()
   const viewers = formatCount(stream.viewers)
@@ -205,6 +205,6 @@ export function LiveStream() {
   )
 }
 
-export function showLiveStream() {
-  return activity.show({ id: "live-stream", view: LiveStream })
+export function showStream() {
+  return activity.show({ id: "stream", view: StreamActivity })
 }

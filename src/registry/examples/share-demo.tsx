@@ -118,7 +118,7 @@ function FileRow({ index, sent }: { index: number; sent: number }) {
   )
 }
 
-export function NearbyShare() {
+export function ShareActivity() {
   const transfer = useTransfer()
   const title = transfer.done ? `Sent to ${RECIPIENT}` : `Sending to ${RECIPIENT}`
 
@@ -206,6 +206,6 @@ export function NearbyShare() {
   )
 }
 
-export function showNearbyShare() {
-  return activity.show({ id: "nearby-share", view: NearbyShare })
+export function showShare() {
+  return activity.show({ id: "share", view: ShareActivity })
 }

@@ -22,7 +22,7 @@ for (const path of ["/", "/showcase", "/playground", "/docs", "/docs/activity"])
 }
 
 test("an open activity has no accessibility violations", async ({ page }) => {
-  await page.goto("/showcase/meeting-notch")
+  await page.goto("/showcase/meeting")
   await page.locator('[data-slot="activity-trigger"]').click()
   await expect(page.locator('[data-slot="activity"]')).toHaveAttribute("data-expanded", "true")
   expect(await audit(page)).toEqual([])

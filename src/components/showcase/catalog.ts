@@ -8,7 +8,7 @@ export type CatalogEntry = {
 
 export const catalog: CatalogEntry[] = [
   {
-    id: "rain",
+    id: "weather",
     name: "Weather",
     description: "A minute-by-minute chart of the next hour that slides with time. Hover any bar for that minute.",
     expanded: true,
@@ -20,7 +20,7 @@ export const catalog: CatalogEntry[] = [
     expanded: true,
   },
   {
-    id: "meeting-notch",
+    id: "meeting",
     name: "Meeting",
     description: "Who's talking, a live waveform and the call length, with mute and leave one tap away.",
   },
@@ -38,23 +38,23 @@ export const catalog: CatalogEntry[] = [
     expanded: true,
   },
   {
-    id: "nearby-share",
+    id: "share",
     name: "Share",
     description: "Files flowing to another device, with per-file progress, live speed and time left.",
   },
   {
-    id: "song-match",
+    id: "song",
     name: "Song",
     description: "Rings pulse out while it listens, then the orb morphs into the album cover with play and save.",
   },
   {
-    id: "live-stream",
+    id: "stream",
     name: "Stream",
     description: "Reactions float up over the stream, comments fade in, and viewers tick up in the pill.",
     expanded: true,
   },
   {
-    id: "sign-in-code",
+    id: "passcode",
     name: "Passcode",
     description: "A one-time code whose digits roll every 30 seconds, with a countdown ring and copy.",
   },
@@ -65,7 +65,7 @@ export const catalog: CatalogEntry[] = [
     expanded: true,
   },
   {
-    id: "live-match",
+    id: "score",
     name: "Score",
     description: "A scoreline that rolls on every goal, a running clock and the latest scorers.",
   },

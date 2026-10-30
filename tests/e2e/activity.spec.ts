@@ -5,7 +5,7 @@ const trigger = (page: Page) => surface(page).locator('[data-slot="activity-trig
 
 test.describe("activity surface", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/showcase/meeting-notch")
+    await page.goto("/showcase/meeting")
     await expect(surface(page)).toBeVisible()
   })
 

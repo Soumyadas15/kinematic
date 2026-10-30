@@ -105,7 +105,7 @@ function Clock({ match }: { match: Match }) {
   )
 }
 
-export function LiveMatch() {
+export function ScoreActivity() {
   const match = useMatch()
   const label = `${TEAMS.home.name} ${match.home}, ${TEAMS.away.name} ${match.away}`
 
@@ -166,6 +166,6 @@ export function LiveMatch() {
   )
 }
 
-export function showLiveMatch() {
-  return activity.show({ id: "live-match", view: LiveMatch })
+export function showScore() {
+  return activity.show({ id: "score", view: ScoreActivity })
 }
