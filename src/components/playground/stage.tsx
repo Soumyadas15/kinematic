@@ -3,13 +3,19 @@
 import * as React from "react"
 import { AnimatePresence, motion } from "motion/react"
 
+import { cn } from "@/lib/utils"
 import { Segmented } from "@/components/playground/segmented"
 import { AppSketch } from "@/components/site/app-sketch"
 import { activity, activityStore } from "@/registry/kinematic/lib/activity-store"
 import { MotionSpeedProvider } from "@/registry/kinematic/lib/motion"
-import { ActivityViewport, type ActivityLayout, type ActivityPosition } from "@/registry/kinematic/ui/activity"
+import {
+  ActivityViewport,
+  type ActivityLayout,
+  type ActivityPosition,
+  type ActivityTone,
+} from "@/registry/kinematic/ui/activity"
 
-export type StageSettings = { layout: ActivityLayout; position: ActivityPosition; speed: number }
+export type StageSettings = { layout: ActivityLayout; position: ActivityPosition; speed: number; tone?: ActivityTone }
 
 export type StageView = "preview" | "code"
 
@@ -93,20 +99,35 @@ function useClearOnLeave() {
   React.useEffect(() => () => activity.clear(), [])
 }
 
-export function Stage({ settings, overlay }: { settings: StageSettings; overlay?: React.ReactNode }) {
+const DEFAULT_HINT = "Pick an activity to launch it here"
+
+export function Stage({
+  settings,
+  overlay,
+  hint = DEFAULT_HINT,
+  className,
+}: {
+  settings: StageSettings
+  overlay?: React.ReactNode
+  hint?: string | null
+  className?: string
+}) {
   const hasActivities = useHasActivities()
   useClearOnLeave()
   return (
     <MotionSpeedProvider speed={settings.speed}>
       <div
         data-slot="playground-stage"
-        className="relative h-[min(30rem,62svh)] overflow-hidden rounded-[28px] bg-muted/60 p-3 sm:p-4 lg:h-auto lg:min-h-[24rem] lg:flex-1 dark:bg-muted/30"
+        className={cn(
+          "relative h-[min(30rem,62svh)] overflow-hidden rounded-[28px] bg-muted/60 p-3 sm:p-4 lg:h-auto lg:min-h-[24rem] lg:flex-1 dark:bg-muted/30",
+          className
+        )}
       >
         <AppSketch />
-        {!hasActivities && (
+        {!hasActivities && hint && (
           <p className="pointer-events-none absolute inset-0 grid place-items-center">
             <span className="rounded-full bg-background/80 px-3.5 py-1.5 text-sm text-muted-foreground backdrop-blur-sm">
-              Pick an activity to launch it here
+              {hint}
             </span>
           </p>
         )}
@@ -114,6 +135,7 @@ export function Stage({ settings, overlay }: { settings: StageSettings; overlay?
           <ActivityViewport
             position={settings.position}
             layout={settings.layout}
+            tone={settings.tone}
             className="absolute [--activity-width:min(22rem,calc(100vw-5rem))]"
           />
         </div>

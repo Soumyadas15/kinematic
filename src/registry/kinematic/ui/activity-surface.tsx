@@ -418,13 +418,13 @@ const MIN_PROGRESS = 0.02
 export function ActivityProgress({ value, className }: { value: number; className?: string }) {
   return (
     <svg viewBox="0 0 20 20" className={cn("size-5 -rotate-90", className)} aria-hidden>
-      <circle cx="10" cy="10" r="8" fill="none" strokeWidth="2" className="stroke-activity-foreground/10" />
+      <circle cx="10" cy="10" r="8" fill="none" strokeWidth="1.25" className="stroke-activity-foreground/10" />
       <motion.circle
         cx="10"
         cy="10"
         r="8"
         fill="none"
-        strokeWidth="2"
+        strokeWidth="1.25"
         strokeLinecap="round"
         className="stroke-activity-foreground"
         initial={false}

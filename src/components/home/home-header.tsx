@@ -7,6 +7,7 @@ import { site } from "@/config/site"
 
 const links: { label: string; href: string; wide?: boolean }[] = [
   { label: "Playground", href: "/playground" },
+  { label: "Showcase", href: "/showcase" },
   { label: "Docs", href: "/docs" },
   { label: "GitHub", href: site.github, wide: true },
 ]
@@ -24,18 +25,18 @@ export function HomeHeader({ section }: { section?: string }) {
         </Link>
         {section && (
           <>
-            <span aria-hidden className="h-4 w-px bg-border" />
-            <h1 className="text-sm font-medium">{section}</h1>
+            <span aria-hidden className="hidden h-4 w-px bg-border sm:block" />
+            <h1 className="sr-only text-sm font-medium sm:not-sr-only">{section}</h1>
           </>
         )}
       </div>
-      <nav className="flex items-center gap-1 text-sm text-muted-foreground">
+      <nav className="flex items-center gap-0.5 text-sm text-muted-foreground sm:gap-1">
         {links.map((link) => (
           <Link
             key={link.label}
             href={link.href}
             className={cn(
-              "rounded-full px-2.5 py-1.5 transition-colors hover:text-foreground sm:px-3",
+              "rounded-full px-2 py-1.5 transition-colors hover:text-foreground sm:px-3",
               link.wide && "hidden sm:inline"
             )}
           >

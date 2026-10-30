@@ -151,7 +151,7 @@ function IslandLayout({ entries, anchor }: { entries: ActivityEntry[]; anchor: A
 
 export type ActivityTone = "default" | "inverted"
 
-const TONES: Record<ActivityTone, React.CSSProperties | undefined> = {
+export const activityTones: Record<ActivityTone, React.CSSProperties | undefined> = {
   default: undefined,
   inverted: {
     "--activity-background": "var(--foreground)",
@@ -191,7 +191,7 @@ export function ActivityViewport({
           POSITIONS[position],
           className
         )}
-        style={{ ...TONES[tone], ...style }}
+        style={{ ...activityTones[tone], ...style }}
       >
         {layout === "stack" && <StackLayout entries={entries} />}
         {layout === "single" && <SingleLayout entries={entries} />}

@@ -1,5 +1,7 @@
-export function Steps({ children }: { children: React.ReactNode }) {
-  return <ol className="steps my-8 ml-3 flex flex-col gap-8 border-l pl-8">{children}</ol>
+import { cn } from "@/lib/utils"
+
+export function Steps({ className, children }: { className?: string; children: React.ReactNode }) {
+  return <ol className={cn("steps my-8 ml-3 flex flex-col gap-8 border-l pl-8", className)}>{children}</ol>
 }
 
 export function Step({ title, children }: { title: string; children: React.ReactNode }) {
