@@ -103,7 +103,7 @@ function FileRow({ index, sent }: { index: number; sent: number }) {
   const file = FILES[index]
   const progress = fileProgress(index, sent)
   return (
-    <li className={`flex items-center gap-3 transition-opacity duration-300 ${progress === 0 ? "opacity-40" : ""}`}>
+    <li className={`flex items-center gap-3 transition-opacity duration-300 ${progress === 0 ? "opacity-50" : ""}`}>
       <span className="size-8 shrink-0 rounded-[9px]" style={{ background: file.cover }} />
       <span className="flex min-w-0 flex-1 flex-col">
         <span className="truncate text-sm">{file.name}</span>

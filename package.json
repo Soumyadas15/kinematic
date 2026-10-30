@@ -37,9 +37,12 @@
     "knip": "knip",
     "test": "vitest run",
     "test:watch": "vitest",
-    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm knip && pnpm test && pnpm build",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm knip && pnpm test && pnpm check:og && pnpm build && pnpm check:size",
     "og": "node scripts/og.mjs",
-    "registry:smoke": "bash scripts/registry-smoke.sh"
+    "registry:smoke": "bash scripts/registry-smoke.sh",
+    "e2e": "playwright test",
+    "check:og": "node scripts/check-og.mjs",
+    "check:size": "node scripts/check-size.mjs"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
@@ -57,6 +60,8 @@
     "zod": "4.6.7"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "1.64.1",
     "@tailwindcss/turbopack": "^4",
     "@testing-library/dom": "^10.4.2",
     "@testing-library/react": "^16.3.3",

@@ -44,3 +44,5 @@ next-env.d.ts
 /public/r
 /.source
 public/og/.captures
+playwright-report
+test-results

@@ -25,7 +25,7 @@ dependencies:
     version: 14.7.1(react-dom@19.3.0)(react@19.3.0)
   next:
     specifier: 16.4.3
-    version: 16.4.3(@babel/core@7.29.7)(@types/node@22.20.5)(react-dom@19.3.0)(react@19.3.0)
+    version: 16.4.3(@babel/core@7.29.7)(@playwright/test@1.64.1)(@types/node@22.20.5)(react-dom@19.3.0)(react@19.3.0)
   radix-ui:
     specifier: ^1.8.1
     version: 1.8.1(@types/react-dom@19.3.0)(@types/react@19.3.0)(react-dom@19.3.0)(react@19.3.0)
@@ -46,6 +46,12 @@ dependencies:
     version: 4.6.7
 
 devDependencies:
+  '@axe-core/playwright':
+    specifier: ^4.14.0
+    version: 4.14.0(playwright-core@1.64.1)
+  '@playwright/test':
+    specifier: 1.64.1
+    version: 1.64.1
   '@tailwindcss/turbopack':
     specifier: ^4
     version: 4.3.3
@@ -133,6 +139,16 @@ packages:
       css-tree: 3.2.1
       is-potential-custom-element-name: 1.0.1
       lru-cache: 11.5.3
+    dev: true
+
+  /@axe-core/playwright@4.14.0(playwright-core@1.64.1):
+    resolution: {integrity: sha512-SGUhG5PIHd2eMdpgBF2PyQLOhX+qyDR2PT4cmoS4Qk2ak+jX/rrSvst9l0PGv5WTHolKpUMvVmoHpr4cZgf1RQ==}
+    engines: {node: '>=22.12.0'}
+    peerDependencies:
+      playwright-core: '>= 1.0.0'
+    dependencies:
+      axe-core: 4.14.0
+      playwright-core: 1.64.1
     dev: true
 
   /@babel/code-frame@7.29.7:
@@ -1572,6 +1588,13 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /@playwright/test@1.64.1:
+    resolution: {integrity: sha512-IaYGml/nSOiZWROfPtuIL7neuu9qDOZ3TNvNljUIrhDMxiGTgPjzj/g9p9RxpS2tSepPDRY+UwAaEeiKtUvIAg==}
+    engines: {node: '>=20'}
+    hasBin: true
+    dependencies:
+      playwright: 1.64.1
 
   /@radix-ui/number@1.1.3:
     resolution: {integrity: sha512-Road2bidD0uu/1BGDOWNdPI06g0lIRy6IF9GZcIrDK2KGItfor8IQwQa+yM2ERgHM1MmHxaxpTzk0/Jp42lNfA==}
@@ -5509,7 +5532,7 @@ packages:
       mdast-util-mdx: 3.0.0
       micromark: 4.0.3
       micromark-extension-gfm-table: 2.1.2
-      next: 16.4.3(@babel/core@7.29.7)(@types/node@22.20.5)(react-dom@19.3.0)(react@19.3.0)
+      next: 16.4.3(@babel/core@7.29.7)(@playwright/test@1.64.1)(@types/node@22.20.5)(react-dom@19.3.0)(react@19.3.0)
       npm-to-yarn: 3.2.0
       react: 19.3.0
       react-dom: 19.3.0(react@19.3.0)
@@ -5576,7 +5599,7 @@ packages:
       github-slugger: 2.0.0
       magic-string: 1.4.5
       mdast-util-mdx: 3.0.0
-      next: 16.4.3(@babel/core@7.29.7)(@types/node@22.20.5)(react-dom@19.3.0)(react@19.3.0)
+      next: 16.4.3(@babel/core@7.29.7)(@playwright/test@1.64.1)(@types/node@22.20.5)(react-dom@19.3.0)(react@19.3.0)
       picocolors: 1.1.1
       picomatch: 4.0.7
       react: 19.3.0
@@ -7392,7 +7415,7 @@ packages:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
     dev: true
 
-  /next@16.4.3(@babel/core@7.29.7)(@types/node@22.20.5)(react-dom@19.3.0)(react@19.3.0):
+  /next@16.4.3(@babel/core@7.29.7)(@playwright/test@1.64.1)(@types/node@22.20.5)(react-dom@19.3.0)(react@19.3.0):
     resolution: {integrity: sha512-OqxKTGi9u80FydydsMNYNjnuje9Au+kvHlt2GZ//ftdpDHm1dxKqAaENoOOTX5wKzn+9vaKUNIfZeyZUuLhCnA==}
     engines: {node: '>=20.9.0'}
     hasBin: true
@@ -7414,6 +7437,7 @@ packages:
         optional: true
     dependencies:
       '@next/env': 16.4.3
+      '@playwright/test': 1.64.1
       '@swc/helpers': 0.5.23
       baseline-browser-mapping: 2.11.34
       caniuse-lite: 1.0.30001819
@@ -7767,7 +7791,13 @@ packages:
     resolution: {integrity: sha512-BC4s8y6SEVA6Q1rSxZTto8hI1KUI3xXlHGZgvGqP4IqPdI/a6FX9H29IDNz7vKo9l21b6LfYosScPL6M3xxyDQ==}
     engines: {node: '>=20'}
     hasBin: true
-    dev: true
+
+  /playwright@1.64.1:
+    resolution: {integrity: sha512-HCrVhHr5QQuwYoswEUGTb7gGp522yflbv/ST8nF4sFWGuLjQCt17Q/EubpGGSNKYn1tsTCPZxqHhHCfVURu7UA==}
+    engines: {node: '>=20'}
+    hasBin: true
+    dependencies:
+      playwright-core: 1.64.1
 
   /possible-typed-array-names@1.1.0:
     resolution: {integrity: sha512-/+5VFTchJDoVj3bhoqi6UeymcD00DAwb1nJwamzPvHEszJ4FpF6SNNbUbOS8yI56qHzdV8eK0qEfOSiodkTdxg==}
