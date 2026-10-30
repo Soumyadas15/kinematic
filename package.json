@@ -31,14 +31,15 @@
     "start": "next start",
     "registry:build": "rm -rf public/r && shadcn build",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "next typegen && tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "knip": "knip",
     "test": "vitest run",
     "test:watch": "vitest",
     "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm knip && pnpm test && pnpm build",
-    "og": "node scripts/og.mjs"
+    "og": "node scripts/og.mjs",
+    "registry:smoke": "bash scripts/registry-smoke.sh"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
