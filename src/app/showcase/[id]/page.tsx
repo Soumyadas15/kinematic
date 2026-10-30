@@ -9,7 +9,6 @@ import { Step, Steps } from "@/components/site/docs-blocks"
 import { HighlightedCode } from "@/components/site/highlighted-code"
 import { InstallCommand } from "@/components/site/install-command"
 import { JsonLd } from "@/components/site/json-ld"
-import { site } from "@/config/site"
 import { pageMetadata } from "@/lib/metadata"
 import { breadcrumbSchema, sourceCodeSchema } from "@/lib/structured-data"
 import { readExampleSource } from "@/lib/registry-files"
@@ -50,7 +49,7 @@ async function ShowcaseItem({ params }: { params: Params }) {
   const code = (
     <Steps className="my-1 gap-7">
       <Step title="Add the primitives">
-        <InstallCommand args={`add ${registryItems.map((name) => `${site.registryNamespace}/${name}`).join(" ")}`} />
+        <InstallCommand items={registryItems} />
       </Step>
       <Step title="Copy the file">
         <p>

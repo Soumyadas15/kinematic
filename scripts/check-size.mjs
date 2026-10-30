@@ -3,7 +3,7 @@ import path from "node:path"
 import { gzipSync } from "node:zlib"
 
 const BUDGET_KB = 12.5
-const NAMESPACE = "@kinematic/"
+const DEPENDENCY = /\/r\/([a-z0-9-]+)\.json$/
 const registry = path.join(process.cwd(), "public/r")
 
 function collect(name, items = new Map()) {
@@ -11,7 +11,8 @@ function collect(name, items = new Map()) {
   const item = JSON.parse(readFileSync(path.join(registry, `${name}.json`), "utf8"))
   items.set(name, item)
   for (const dependency of item.registryDependencies ?? []) {
-    if (dependency.startsWith(NAMESPACE)) collect(dependency.slice(NAMESPACE.length), items)
+    const match = dependency.match(DEPENDENCY)
+    if (match) collect(match[1], items)
   }
   return items
 }

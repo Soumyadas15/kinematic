@@ -6,12 +6,16 @@ const BASE_URL = process.env.OG_BASE_URL ?? "http://localhost:3001"
 const CHROME = process.env.CHROME_PATH ?? "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 const OUT = path.join(process.cwd(), "public", "og")
 const WORK = path.join(OUT, ".captures")
-const INSTALL = "npx shadcn add @kinematic/activity"
 const SETTLE_MS = 3500
 const MARK =
   "M11 3h10a8 8 0 0 1 8 8v10a8 8 0 0 1-8 8H11a8 8 0 0 1-8-8V11a8 8 0 0 1 8-8ZM12.5 7.5h7a2.5 2.5 0 0 1 0 5h-7a2.5 2.5 0 0 1 0-5Z"
 
 const escape = (text) => text.replace(/[&<>"]/g, (char) => `&#${char.charCodeAt(0)};`)
+
+async function readInstallCommand(page) {
+  await page.goto(BASE_URL, { waitUntil: "networkidle" })
+  return (await page.locator("main section code").first().textContent()).trim()
+}
 
 async function readShowcase(page) {
   await page.goto(`${BASE_URL}/showcase`, { waitUntil: "networkidle" })
@@ -58,7 +62,7 @@ async function captureExamples(page, items) {
   }
 }
 
-function card({ eyebrow, title, tagline, description, capture }) {
+function card({ eyebrow, title, tagline, description, capture, install }) {
   const lede = tagline
     ? `<h1>${escape(title)} <span>${escape(tagline)}</span></h1>`
     : `<h1>${escape(title)}</h1><p>${escape(description ?? "")}</p>`
@@ -74,7 +78,7 @@ body{width:1200px;height:630px;background:#fafafa;font-family:Geist,sans-serif;c
 h1{font-size:${capture ? 60 : 68}px;line-height:1.06;font-weight:600;letter-spacing:-.035em}
 h1 span{color:#8a8a93}
 p{margin-top:18px;font-size:26px;line-height:1.35;color:#71717a;letter-spacing:-.01em}
-.install{align-self:flex-start;font-family:"Geist Mono",monospace;font-size:20px;color:#3f3f46;background:#efeff1;border-radius:999px;padding:12px 22px}
+.install{align-self:flex-start;white-space:nowrap;font-family:"Geist Mono",monospace;font-size:15px;color:#3f3f46;background:#efeff1;border-radius:999px;padding:11px 18px}
 .stage{position:absolute;right:56px;top:56px;bottom:56px;width:500px;border-radius:40px;background:#f1f1f3;display:grid;place-items:center;overflow:hidden}
 .stage img{max-width:430px;max-height:470px;filter:drop-shadow(0 24px 40px rgba(10,10,10,.16))}
 </style></head><body>
@@ -82,7 +86,7 @@ p{margin-top:18px;font-size:26px;line-height:1.35;color:#71717a;letter-spacing:-
 <div class="left">
   <div class="brand"><svg width="34" height="34" viewBox="3 3 26 26"><path fill-rule="evenodd" fill="#0a0a0a" d="${MARK}"/></svg>Kinematic${eyebrow ? ` <em>/ ${escape(eyebrow)}</em>` : ""}</div>
   <div>${lede}</div>
-  <div class="install">${INSTALL}</div>
+  <div class="install">${escape(install.replace("shadcn@latest", "shadcn"))}</div>
 </div>
 ${capture ? `<div class="stage"><img src="file://${path.join(WORK, `${capture}.png`)}"></div>` : ""}
 </body></html>`
@@ -90,7 +94,7 @@ ${capture ? `<div class="stage"><img src="file://${path.join(WORK, `${capture}.p
 
 async function render(page, name, spec) {
   const file = path.join(WORK, `${name.replaceAll("/", "-")}.html`)
-  await writeFile(file, card(spec))
+  await writeFile(file, card({ ...spec, install }))
   await page.goto(`file://${file}`)
   await page.evaluate(() => document.fonts.ready)
   await page.waitForTimeout(200)
@@ -100,11 +104,21 @@ async function render(page, name, spec) {
   console.log(`og ${name}.jpg`)
 }
 
+const reachable = await fetch(BASE_URL, { signal: AbortSignal.timeout(5000) }).then(
+  (response) => response.ok,
+  () => false
+)
+if (!reachable) {
+  console.error(`No site at ${BASE_URL}. Start it first with: pnpm dev -p 3001`)
+  process.exit(1)
+}
+
 const browser = await chromium.launch({ executablePath: CHROME, headless: true, args: ["--mute-audio"] })
 await mkdir(WORK, { recursive: true })
 
 const site = await browser.newPage({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 2 })
 await site.addInitScript(() => localStorage.setItem("theme", "light"))
+const install = await readInstallCommand(site)
 const items = await readShowcase(site)
 const docs = await readDocs(site)
 await captureExamples(site, items)
