@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 
@@ -6,7 +7,12 @@ import { featured, showcase } from "@/components/showcase/items"
 import { ShowcaseGallery } from "@/components/showcase/showcase-gallery"
 import { CopyButton } from "@/components/site/copy-button"
 import { PageIntro } from "@/components/site/page-intro"
+import { JsonLd } from "@/components/site/json-ld"
 import { site } from "@/config/site"
+import { pageMetadata } from "@/lib/metadata"
+import { sourceCodeSchema, websiteSchema } from "@/lib/structured-data"
+
+export const metadata: Metadata = pageMetadata({ description: site.description, path: "/", image: "home" })
 
 const LINKS = [
   { label: "Get started", href: "/docs/quick-start" },
@@ -45,6 +51,12 @@ function Hero() {
 export default function Home() {
   return (
     <main className="mx-auto w-full max-w-6xl px-6 pb-24">
+      <JsonLd
+        data={[
+          websiteSchema(),
+          sourceCodeSchema({ name: `${site.name} Activity`, description: site.description, pathname: "/" }),
+        ]}
+      />
       <HomeHeader />
       <Hero />
       <ShowcaseGallery items={featured} />

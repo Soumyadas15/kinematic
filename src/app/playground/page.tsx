@@ -2,11 +2,15 @@ import type { Metadata } from "next"
 
 import { HomeHeader } from "@/components/home/home-header"
 import { ActivityPlayground } from "@/components/playground/activity-playground"
+import { pageMetadata } from "@/lib/metadata"
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Playground",
-  description: "Launch live activities, tune them, and copy the code to drop them into your app.",
-}
+  description:
+    "Launch live React activities, tune layout, position and speed, then copy the code into your app. Built for shadcn/ui.",
+  path: "/playground",
+  image: "playground",
+})
 
 export default function PlaygroundPage() {
   return (

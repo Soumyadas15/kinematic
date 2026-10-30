@@ -88,6 +88,9 @@ devDependencies:
   knip:
     specifier: '5'
     version: 5.88.1(@types/node@22.20.5)(typescript@5.9.3)
+  playwright-core:
+    specifier: 1.64.1
+    version: 1.64.1
   prettier:
     specifier: ^3.9.10
     version: 3.9.10
@@ -7759,6 +7762,12 @@ packages:
     dependencies:
       find-up: 3.0.0
     dev: false
+
+  /playwright-core@1.64.1:
+    resolution: {integrity: sha512-BC4s8y6SEVA6Q1rSxZTto8hI1KUI3xXlHGZgvGqP4IqPdI/a6FX9H29IDNz7vKo9l21b6LfYosScPL6M3xxyDQ==}
+    engines: {node: '>=20'}
+    hasBin: true
+    dev: true
 
   /possible-typed-array-names@1.1.0:
     resolution: {integrity: sha512-/+5VFTchJDoVj3bhoqi6UeymcD00DAwb1nJwamzPvHEszJ4FpF6SNNbUbOS8yI56qHzdV8eK0qEfOSiodkTdxg==}

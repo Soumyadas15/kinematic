@@ -3,7 +3,11 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 
 import { getMDXComponents } from "@/components/mdx"
+import { JsonLd } from "@/components/site/json-ld"
+import { site } from "@/config/site"
+import { pageMetadata } from "@/lib/metadata"
 import { source } from "@/lib/source"
+import { articleSchema, breadcrumbSchema } from "@/lib/structured-data"
 
 type Params = PageProps<"/docs/[[...slug]]">["params"]
 
@@ -15,7 +19,13 @@ export async function generateMetadata({ params }: PageProps<"/docs/[[...slug]]"
   const { slug } = await params
   const page = source.getPage(slug)
   if (!page) notFound()
-  return { title: page.data.title, description: page.data.description }
+  const description = page.data.description ?? site.description
+  return pageMetadata({
+    title: page.data.title,
+    description,
+    path: page.url,
+    image: `docs/${slug?.join("/") ?? "index"}`,
+  })
 }
 
 function DocSkeleton() {
@@ -36,6 +46,19 @@ async function Doc({ params }: { params: Params }) {
 
   return (
     <main className="w-full max-w-2xl min-w-0">
+      <JsonLd
+        data={[
+          articleSchema({
+            title: page.data.title,
+            description: page.data.description ?? site.description,
+            pathname: page.url,
+          }),
+          breadcrumbSchema([
+            { name: "Docs", pathname: "/docs" },
+            { name: page.data.title, pathname: page.url },
+          ]),
+        ]}
+      />
       <header className="mb-10 flex flex-col gap-3">
         <h1 className="text-3xl font-semibold tracking-[-0.02em]">{page.data.title}</h1>
         {page.data.description && (

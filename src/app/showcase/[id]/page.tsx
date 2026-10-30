@@ -3,23 +3,32 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 
 import { HomeHeader } from "@/components/home/home-header"
-import { findShowcaseItem, showcase } from "@/components/showcase/items"
+import { catalog, findCatalogEntry } from "@/components/showcase/catalog"
 import { ShowcaseDetail } from "@/components/showcase/showcase-detail"
 import { Step, Steps } from "@/components/site/docs-blocks"
 import { HighlightedCode } from "@/components/site/highlighted-code"
 import { InstallCommand } from "@/components/site/install-command"
+import { JsonLd } from "@/components/site/json-ld"
 import { site } from "@/config/site"
+import { pageMetadata } from "@/lib/metadata"
+import { breadcrumbSchema, sourceCodeSchema } from "@/lib/structured-data"
 import { readExampleSource } from "@/lib/registry-files"
 
 type Params = PageProps<"/showcase/[id]">["params"]
 
 export function generateStaticParams() {
-  return showcase.map(({ id }) => ({ id }))
+  return catalog.map(({ id }) => ({ id }))
 }
 
 export async function generateMetadata({ params }: PageProps<"/showcase/[id]">): Promise<Metadata> {
-  const item = findShowcaseItem((await params).id)
-  return item ? { title: item.name, description: item.description } : {}
+  const entry = findCatalogEntry((await params).id)
+  if (!entry) return {}
+  return pageMetadata({
+    title: `${entry.name} · React example`,
+    description: `${entry.description} A live React example built with the Kinematic Activity component.`,
+    path: `/showcase/${entry.id}`,
+    image: `showcase/${entry.id}`,
+  })
 }
 
 function ItemSkeleton() {
@@ -32,7 +41,7 @@ function ItemSkeleton() {
 }
 
 async function ShowcaseItem({ params }: { params: Params }) {
-  const item = findShowcaseItem((await params).id)
+  const item = findCatalogEntry((await params).id)
   if (!item) notFound()
   const source = await readExampleSource(item.id)
   const file = `components/${item.id}.tsx`
@@ -62,7 +71,20 @@ async function ShowcaseItem({ params }: { params: Params }) {
     </Steps>
   )
 
-  return <ShowcaseDetail id={item.id} name={item.name} code={code} />
+  return (
+    <>
+      <JsonLd
+        data={[
+          sourceCodeSchema({ name: item.name, description: item.description, pathname: `/showcase/${item.id}` }),
+          breadcrumbSchema([
+            { name: "Showcase", pathname: "/showcase" },
+            { name: item.name, pathname: `/showcase/${item.id}` },
+          ]),
+        ]}
+      />
+      <ShowcaseDetail id={item.id} name={item.name} code={code} />
+    </>
+  )
 }
 
 export default function ShowcaseItemPage({ params }: PageProps<"/showcase/[id]">) {

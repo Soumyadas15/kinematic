@@ -1,1 +1,0 @@
-Kinematic: Activity Component for React. One live surface for uploads, agents, music, calls and timers.
