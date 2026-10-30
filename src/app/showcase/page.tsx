@@ -10,7 +10,7 @@ import { itemListSchema } from "@/lib/structured-data"
 
 export const metadata: Metadata = pageMetadata({
   title: "Showcase",
-  description: `${catalog.length} live React examples built from the Kinematic Activity primitives: meeting notch, coding agent, live captions, rain alerts and more. Copy the source into your app.`,
+  description: `${catalog.length} live React examples built from the Kinematic Activity primitives: meeting, agent, captions, weather and more. Copy the source into your app.`,
   path: "/showcase",
   image: "showcase",
 })
