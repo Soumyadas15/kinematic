@@ -25,11 +25,21 @@ function withoutTransitions(apply: () => void) {
   requestAnimationFrame(() => style.remove())
 }
 
+function applyTheme(theme: Theme) {
+  document.documentElement.classList.toggle("dark", theme === "dark")
+  document.documentElement.style.colorScheme = theme
+}
+
+function canCrossfade() {
+  return "startViewTransition" in document && !matchMedia("(prefers-reduced-motion: reduce)").matches
+}
+
 export function setTheme(theme: Theme) {
-  withoutTransitions(() => {
-    document.documentElement.classList.toggle("dark", theme === "dark")
-    document.documentElement.style.colorScheme = theme
-  })
+  if (canCrossfade()) {
+    document.startViewTransition(() => withoutTransitions(() => applyTheme(theme)))
+  } else {
+    withoutTransitions(() => applyTheme(theme))
+  }
   try {
     localStorage.setItem(STORAGE_KEY, theme)
   } catch {}
