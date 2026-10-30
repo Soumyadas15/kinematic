@@ -115,7 +115,7 @@ function KeyGlyph({ large }: { large: boolean }) {
   )
 }
 
-export function SignInCode() {
+export function PasscodeActivity() {
   const { dismiss } = useActivity()
   const code = useCode()
   const { copied, copy } = useCopy(code.code)
@@ -169,6 +169,6 @@ export function SignInCode() {
   )
 }
 
-export function showSignInCode() {
-  return activity.show({ id: "sign-in-code", view: SignInCode })
+export function showPasscode() {
+  return activity.show({ id: "passcode", view: PasscodeActivity })
 }

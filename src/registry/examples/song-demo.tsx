@@ -83,7 +83,7 @@ function Equalizer() {
   )
 }
 
-export function SongMatch() {
+export function SongActivity() {
   const { dismiss } = useActivity()
   const { found, listenAgain } = useMatch()
 
@@ -165,6 +165,6 @@ export function SongMatch() {
   )
 }
 
-export function showSongMatch() {
-  return activity.show({ id: "song-match", view: SongMatch })
+export function showSong() {
+  return activity.show({ id: "song", view: SongActivity })
 }

@@ -114,7 +114,7 @@ function Stat({ label, value }: { label: string; value: string }) {
   )
 }
 
-export function RainActivity() {
+export function WeatherActivity() {
   const hour = useForecast()
   const [hovered, setHovered] = React.useState<number | null>(null)
   const { title, detail } = summary(hour)
@@ -183,6 +183,6 @@ export function RainActivity() {
   )
 }
 
-export function showRain() {
-  return activity.show({ id: "rain", view: RainActivity })
+export function showWeather() {
+  return activity.show({ id: "weather", view: WeatherActivity })
 }

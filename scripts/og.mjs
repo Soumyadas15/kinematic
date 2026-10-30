@@ -127,13 +127,13 @@ const canvas = await browser.newPage({ viewport: { width: 1200, height: 630 }, d
 await render(canvas, "home", {
   title: "Activity Component for React.",
   tagline: "Built for things that take a while.",
-  capture: "meeting-notch",
+  capture: "meeting",
 })
 await render(canvas, "showcase", {
   eyebrow: "Showcase",
   title: "Made from the primitives.",
   tagline: `${items.length} live examples.`,
-  capture: "rain",
+  capture: "weather",
 })
 await render(canvas, "playground", {
   eyebrow: "Playground",
@@ -154,7 +154,7 @@ for (const doc of docs) {
     eyebrow: "Docs",
     title: doc.title,
     description: doc.description,
-    capture: "meeting-notch",
+    capture: "meeting",
   })
 }
 
