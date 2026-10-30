@@ -1,7 +1,10 @@
 import { loader } from "fumadocs-core/source"
 import { pageSchema } from "fumadocs-core/source/schema"
+import { applyMdxPreset } from "fumadocs-mdx/config"
 import { defineDocs } from "fumadocs-mdx/macro"
 import { z } from "zod"
+
+import { CODE_THEMES } from "@/lib/code-themes"
 
 const docs = defineDocs({
   dir: "content/docs",
@@ -12,6 +15,7 @@ const docs = defineDocs({
     postprocess: {
       includeProcessedMarkdown: true,
     },
+    mdxOptions: applyMdxPreset({ rehypeCodeOptions: { themes: CODE_THEMES } }),
   },
 })
 

@@ -4,13 +4,12 @@ import * as React from "react"
 import { useShiki } from "fumadocs-core/highlight/client"
 
 import { CodeFrame } from "@/components/site/code-frame"
-
-const THEMES = { light: "github-light", dark: "github-dark" } as const
+import { CODE_THEMES } from "@/lib/code-themes"
 
 function Highlighted({ code, lang, title }: { code: string; lang: string; title?: string }) {
   return useShiki(code, {
     lang,
-    themes: THEMES,
+    themes: CODE_THEMES,
     defaultColor: false,
     components: { pre: (props) => <CodeFrame {...props} title={title} /> },
   })

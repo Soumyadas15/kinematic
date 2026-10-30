@@ -135,7 +135,7 @@ function StepRow({ item, index, agent }: { item: Step; index: number; agent: Age
   const Icon = item.icon
 
   return (
-    <li className={`flex items-center gap-3 transition-opacity duration-300 ${done || current ? "" : "opacity-35"}`}>
+    <li className={`flex items-center gap-3 transition-opacity duration-300 ${done || current ? "" : "opacity-50"}`}>
       <span
         className={`grid size-7 shrink-0 place-items-center rounded-[10px] ${waiting ? "bg-amber-400/15 text-amber-400" : "bg-activity-muted"}`}
       >
