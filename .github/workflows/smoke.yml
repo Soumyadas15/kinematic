@@ -1,0 +1,23 @@
+name: Production smoke
+
+on:
+  deployment_status:
+
+jobs:
+  smoke:
+    name: Production smoke
+    if: github.event.deployment_status.state == 'success' && github.event.deployment_status.environment == 'Production'
+    runs-on: ubuntu-latest
+    env:
+      SITE: https://kinematic.design
+    steps:
+      - name: Check live URLs
+        run: |
+          paths="/ /showcase /showcase/rain /playground /docs /docs/quick-start /r/registry.json /r/activity.json /sitemap.xml /robots.txt /og/home.jpg"
+          failed=0
+          for path in $paths; do
+            status=$(curl -sS -o /dev/null -w '%{http_code}' --retry 5 --retry-delay 10 --retry-all-errors "$SITE$path")
+            echo "$status $path"
+            [ "$status" = "200" ] || failed=1
+          done
+          exit $failed
