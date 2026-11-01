@@ -34,6 +34,7 @@ function between(random: () => number, min: number, max: number) {
   return min + random() * (max - min)
 }
 
+/** The colours `GradientOrb` would use for a seed, to reuse elsewhere. */
 export function orbPalette(seed: string): OrbPalette {
   const random = seededRandom(hashString(seed))
   const hue = (HUE_START + Math.floor(random() * HUE_SPAN)) % 360
@@ -64,10 +65,13 @@ const LIGHTING = [
 ].join(", ")
 
 export type GradientOrbProps = Omit<React.ComponentProps<"span">, "children"> & {
+  /** Any string. The same seed always gives the same orb. Also used as its accessible label. */
   seed: string
+  /** Slowly drifts the gradient. Paused for reduced motion. @default false */
   animated?: boolean
 }
 
+/** A mesh gradient avatar generated from a string. Size it with `className`, e.g. `size-10`. */
 export function GradientOrb({ seed, animated = false, className, style, ...props }: GradientOrbProps) {
   return (
     <span

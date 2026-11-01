@@ -3,13 +3,19 @@ import type * as React from "react"
 export type ActivityItemStatus = "queued" | "running" | "done" | "failed"
 
 export type ActivityItem = {
+  /** Unique within its task. Used to update the item. */
   id: string
+  /** Main line of the row, e.g. a file name. */
   label: string
+  /** Secondary line, e.g. a file size. Replaced by the error while the item has failed. */
   meta?: string
+  /** Shown in the item's tile. Defaults to a file icon. */
   icon?: React.ReactNode
   status: ActivityItemStatus
+  /** From 0 to 1. */
   progress: number
   error?: string
+  /** Shows a Retry button while the item has failed. */
   retry?: () => void
 }
 
@@ -17,6 +23,7 @@ export type ActivityItemInput = Pick<ActivityItem, "id" | "label" | "meta" | "ic
 
 export type ActivityAction = { label: string; onClick: () => void }
 
+/** What a finished task settles into: a label, and optionally one action button. */
 export type ActivityOutcome = { label: string; action?: ActivityAction }
 
 export type ActivityStage = "working" | "settled"
@@ -40,47 +47,106 @@ export type ActivityView = {
 
 export type ActivityEntry = ActivityTask | ActivityView
 
-export type ActivityRun = (report: (progress: number) => void) => Promise<unknown>
+/**
+ * Does one item's work. Call `report` with 0 to 1 as it goes; resolve when done, throw to fail the item.
+ * `signal` aborts when the task is dismissed, so pass it to `fetch` or check it to stop early.
+ */
+export type ActivityRun = (report: (progress: number) => void, signal: AbortSignal) => Promise<unknown>
 
 export type ActivityStartOptions = {
+  /** Shown while the task runs. */
   title: string
+  /** Each item starts queued at 0. */
   items: ActivityItemInput[]
 }
 
 export type ActivityTrackOptions = {
+  /** Shown while the task runs. */
   title: string
+  /** Each item's `run` does its work and reports progress. A failed item gets a Retry button. */
   items: (ActivityItemInput & { run: ActivityRun })[]
+  /** Run items one after another. A failure pauses the rest until it's retried. @default false */
   sequential?: boolean
+  /** What the task settles into once every item is done. */
   outcome: (task: ActivityTask) => ActivityOutcome
 }
 
 export type ActivityShowOptions = {
+  /** Reusing an id replaces that activity (its `onDismiss` runs first). @default a generated id */
   id?: string
+  /** The activity's content, built from ActivityCompact, ActivityExpanded and the other parts. */
   view: React.ComponentType
+  /** Runs when the activity is dismissed or replaced. Clean up here (stop audio, abort requests). */
   onDismiss?: () => void
 }
 
 export type ActivityViewHandle = {
   id: string
+  /** Opens the card. */
   expand: () => void
+  /** Folds it back into the pill. */
   collapse: () => void
+  /** Removes it from the viewport. */
   dismiss: () => void
 }
 
 export type ActivityHandle = ActivityViewHandle & {
+  /** Changes any field of an item. */
   update: (itemId: string, patch: Partial<ActivityItem>) => void
+  /** Marks the item running at `progress` (0 to 1, clamped). */
   progress: (itemId: string, progress: number) => void
+  /** Marks the item done and clears any error. */
   complete: (itemId: string) => void
+  /** Marks the item failed. Pass `retry` to show a Retry button. */
   fail: (itemId: string, failure: { error: string; retry?: () => void }) => void
+  /** Settles the task into its outcome. */
   finish: (outcome: ActivityOutcome) => void
 }
 
 const FALLBACK_ERROR = "Something went wrong"
 
+// Typed locally so the file compiles without @types/node. Bundlers replace process.env.NODE_ENV at build time.
+declare const process: { env: { NODE_ENV?: string } } | undefined
+const DEVELOPMENT = typeof process !== "undefined" && process.env.NODE_ENV === "development"
+
 let entries: ActivityEntry[] = []
 let focused: string | null = null
 let counter = 0
+let viewports = 0
 const listeners = new Set<() => void>()
+const warned = new Set<string>()
+const aborters = new Map<string, AbortController>()
+
+function warnOnce(key: string, message: string) {
+  if (!DEVELOPMENT || warned.has(key)) return
+  warned.add(key)
+  console.warn(`[kinematic] ${message}`)
+}
+
+function mountViewport() {
+  viewports += 1
+  if (viewports > 1) {
+    warnOnce(
+      "viewports",
+      "More than one <ActivityViewport /> is mounted, so every activity appears in each of them. Render a single viewport near the root of your app."
+    )
+  }
+  return () => {
+    viewports -= 1
+  }
+}
+
+// Checked a tick later, so a viewport mounting in the same render still counts.
+function expectViewport() {
+  if (!DEVELOPMENT) return
+  setTimeout(() => {
+    if (viewports > 0 || entries.length === 0) return
+    warnOnce(
+      "no-viewport",
+      "An activity was started, but no <ActivityViewport /> is mounted, so nothing is shown. Render <ActivityViewport /> once near the root of your app, for example in app/layout.tsx."
+    )
+  })
+}
 
 function nextId() {
   counter += 1
@@ -142,6 +208,10 @@ function updateItem(taskId: string, itemId: string, patch: Partial<ActivityItem>
 
 function release(entry: ActivityEntry | undefined) {
   if (entry?.kind === "view") entry.onDismiss?.()
+  if (entry?.kind === "task") {
+    aborters.get(entry.id)?.abort()
+    aborters.delete(entry.id)
+  }
 }
 
 function dismiss(id: string) {
@@ -205,6 +275,7 @@ function start({ title, items }: ActivityStartOptions): ActivityHandle {
   entries = [...entries, task]
   focused = id
   emit()
+  expectViewport()
   return createTaskHandle(id)
 }
 
@@ -215,6 +286,7 @@ function show({ id = nextId(), view, onDismiss }: ActivityShowOptions): Activity
   entries = previous ? entries.map((current) => (current.id === id ? entry : current)) : [...entries, entry]
   focused = id
   emit()
+  expectViewport()
   return createViewHandle(id)
 }
 
@@ -224,6 +296,8 @@ function errorMessage(error: unknown) {
 
 function track({ title, items, sequential = false, outcome }: ActivityTrackOptions): ActivityHandle {
   const handle = start({ title, items })
+  const controller = new AbortController()
+  aborters.set(handle.id, controller)
   type Item = (typeof items)[number]
 
   const settle = () => {
@@ -232,9 +306,10 @@ function track({ title, items, sequential = false, outcome }: ActivityTrackOptio
   }
 
   const run = async (item: Item): Promise<boolean> => {
+    if (controller.signal.aborted) return false
     handle.progress(item.id, 0)
     try {
-      await item.run((value) => handle.progress(item.id, value))
+      await item.run((value) => handle.progress(item.id, value), controller.signal)
       handle.complete(item.id)
       return true
     } catch (error) {
@@ -267,6 +342,7 @@ function track({ title, items, sequential = false, outcome }: ActivityTrackOptio
   return handle
 }
 
+/** A tiny store you update from anywhere (`set`) and read inside a view with `useActivityState`. */
 export function createActivityState<T>(initial: T) {
   let value = initial
   const subscribers = new Set<() => void>()
@@ -289,6 +365,7 @@ export type ActivityState<T> = ReturnType<typeof createActivityState<T>>
 
 export const activityStore = {
   subscribe,
+  mountViewport,
   getEntries,
   getTasks,
   getFocused,
@@ -299,4 +376,19 @@ export const activityStore = {
   isExpanded,
 }
 
-export const activity = { start, track, show, dismiss, clear }
+/**
+ * Starts and controls activities from anywhere, even outside React.
+ * Needs one `<ActivityViewport />` mounted to show them.
+ */
+export const activity = {
+  /** Shows a task whose items you update yourself, e.g. from websocket events. */
+  start,
+  /** Runs each item's `run`, tracks progress, adds Retry on failure and settles into `outcome`. */
+  track,
+  /** Shows a custom activity. Reusing an `id` replaces the existing one. */
+  show,
+  /** Removes one activity by id. */
+  dismiss,
+  /** Removes every activity. */
+  clear,
+}

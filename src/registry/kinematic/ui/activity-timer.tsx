@@ -39,16 +39,22 @@ type TimerSnapshot = {
 }
 
 export type TimerOptions = {
+  /** Shown in the pill. @default "Focus" */
   label?: string
+  /** Length of the countdown. Fractions work, e.g. `0.5` for 30 seconds. @default 25 */
   minutes?: number
+  /** Starting a timer with an id that's already showing replaces it. @default "timer" */
   id?: string
+  /** Called once when the countdown reaches zero or `end()` is called, even while it's out of view. */
   onDone?: () => void
 }
 
 export type TimerHandle = ActivityViewHandle & {
   pause: () => void
   resume: () => void
+  /** Adds minutes to the countdown. */
   add: (minutes: number) => void
+  /** Finishes now and calls `onDone`. */
   end: () => void
 }
 
@@ -309,6 +315,7 @@ function TimerActivity({ state, controls }: { state: ActivityState<TimerSnapshot
   )
 }
 
+/** Shows a countdown: a ring that empties in the pill and rolling digits in the card. */
 export function startTimer({ label = "Focus", minutes = 25, id = "timer", onDone }: TimerOptions = {}): TimerHandle {
   const total = minutes * MINUTE_MS
   const state = createActivityState<TimerSnapshot>({

@@ -31,19 +31,28 @@ import {
 } from "@/registry/kinematic/ui/activity"
 
 export type ActivityTrack = {
+  /** Audio URL. It's also fetched once and decoded to draw the waveform, so cross-origin files need CORS. */
   src: string
   title: string
   artist: string
+  /** Cover image URL. */
   cover?: string
 }
 
-export type PlayerOptions = ActivityTrack & { id?: string }
+export type PlayerOptions = ActivityTrack & {
+  /** Showing a player with an id that's already showing replaces it and stops the old audio. @default "now-playing" */
+  id?: string
+}
 
 export type PlayerHandle = ActivityViewHandle & {
+  /** Plays or pauses. */
   toggle: () => void
   pause: () => void
+  /** Animates playback silently, without audio. Useful for demos and screenshots. */
   preview: () => void
+  /** Jumps to a position from 0 (start) to 1 (end). */
   seek: (ratio: number) => void
+  /** Moves by seconds; negative goes back. */
   skip: (seconds: number) => void
   setMuted: (muted: boolean) => void
 }
@@ -464,6 +473,7 @@ function PlayerActivity({ track, controller }: { track: ActivityTrack; controlle
   )
 }
 
+/** Shows a now-playing activity. Playback lives as long as the activity and stops when it's dismissed. */
 export function showPlayer({ id = "now-playing", ...track }: PlayerOptions): PlayerHandle {
   const controller = createPlayback(track.src)
 

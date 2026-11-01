@@ -27,18 +27,27 @@ import {
 export type CallSpeaker = "agent" | "user"
 
 export type CallOptions = {
+  /** Who you're talking to. Also seeds the gradient orb when there's no avatar. */
   name: string
+  /** Avatar image URL. Defaults to a gradient orb made from `name`. */
   avatar?: string
+  /** Microphone stream. Its level drives the bars, and its tracks are stopped when the call ends. */
   stream?: MediaStream
+  /** Give each concurrent call its own id; reusing one replaces that call. @default "call" */
   id?: string
+  /** Called once when the call ends, including when a live call is dismissed or replaced. */
   onEnd?: () => void
 }
 
 export type CallHandle = ActivityViewHandle & {
+  /** Switches from "Connecting…" to live and starts the clock. Ignored once the call has ended. */
   connect: () => void
+  /** Streams a line into the transcript word by word. Resolves when the line is complete. */
   say: (speaker: CallSpeaker, text: string) => Promise<void>
+  /** Sets a speaker's voice level, 0 to 1, e.g. from your voice SDK. */
   setLevel: (speaker: CallSpeaker, value: number) => void
   mute: (muted: boolean) => void
+  /** Ends the call; it dismisses itself a few seconds later. */
   end: () => void
   isEnded: () => boolean
 }
@@ -368,6 +377,7 @@ function CallActivity({ state, controls }: { state: ActivityState<CallSnapshot>;
   )
 }
 
+/** Shows a voice call: live levels in the pill, and a streaming transcript with Mute and End in the card. */
 export function startCall({ name, avatar, stream, id = "call", onEnd }: CallOptions): CallHandle {
   const state = createActivityState<CallSnapshot>({
     name,

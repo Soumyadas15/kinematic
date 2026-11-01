@@ -33,12 +33,18 @@ const ActivityContext = React.createContext<ActivityContextValue | null>(null)
 
 export const ActivityAnchorContext = React.createContext<ActivityAnchor>({ x: "center", y: "start" })
 
+/** The surrounding activity's state: `expanded`, `setExpanded`, `dismiss` and more. Use it to build custom parts. */
 export function useActivity() {
   const context = React.useContext(ActivityContext)
-  if (!context) throw new Error("Activity parts must be rendered inside <Activity>.")
+  if (!context) {
+    throw new Error(
+      "Activity parts (ActivityCompact, ActivityShared, ActivityButton…) must be rendered inside an activity: either a view passed to activity.show({ view }), or an inline <Activity>."
+    )
+  }
   return context
 }
 
+/** Reads a store made with `createActivityState` and re-renders when it changes. */
 export function useActivityState<T>(state: ActivityState<T>) {
   return React.useSyncExternalStore(state.subscribe, state.get, state.get)
 }
@@ -133,19 +139,31 @@ function useOutsidePress(
 }
 
 export type ActivityProps = {
+  /** Scopes shared element names. Give each inline activity on a page its own. @default a generated id */
   id?: string
+  /** Controlled open state. Pair with `onExpandedChange`. */
   expanded?: boolean
+  /** Uncontrolled initial open state. @default false */
   defaultExpanded?: boolean
   onExpandedChange?: (expanded: boolean) => void
+  /** Enables `ActivityDismiss` and is called when it's pressed. */
   onDismiss?: () => void
+  /** Called when the activity's bubble is pressed in the `island` layout. */
   onFocus?: () => void
+  /** `full` is the pill and card, `bubble` shows only `ActivityGlyph`, `hidden` keeps it running unseen. @default "full" */
   presentation?: ActivityPresentation
+  /** Fold back into the pill when the user presses outside it. @default true */
   closeOnOutsideClick?: boolean
+  /** Written to `data-phase` for styling, e.g. `data-[phase=done]:…`. */
   phase?: string
   className?: string
   children: React.ReactNode
 }
 
+/**
+ * One activity surface. The viewport renders these for you; render one yourself to place an activity inline,
+ * outside the viewport.
+ */
 export function Activity({
   id,
   expanded,
@@ -260,6 +278,7 @@ export function Activity({
 
 type SlotProps = { className?: string; children: React.ReactNode }
 
+/** The pill. Shown while the activity is closed. */
 export function ActivityCompact({ className, children }: SlotProps) {
   const { expanded, presentation } = useActivity()
   if (expanded || presentation !== "full") return null
@@ -270,6 +289,7 @@ export function ActivityCompact({ className, children }: SlotProps) {
   )
 }
 
+/** The card. Shown while the activity is open. */
 export function ActivityExpanded({ className, children }: SlotProps) {
   const { expanded } = useActivity()
   if (!expanded) return null
@@ -280,6 +300,7 @@ export function ActivityExpanded({ className, children }: SlotProps) {
   )
 }
 
+/** A short, visually hidden message for screen readers. Change it when something worth hearing happens. */
 export function ActivityAnnounce({ children }: { children?: React.ReactNode }) {
   return (
     <span role="status" data-slot="activity-announce" className="sr-only">
@@ -288,6 +309,7 @@ export function ActivityAnnounce({ children }: { children?: React.ReactNode }) {
   )
 }
 
+/** What the activity shrinks to as a bubble in the `island` layout. `label` names its button. */
 export function ActivityGlyph({ label, children }: { label: string; children: React.ReactNode }) {
   const { presentation, focus } = useActivity()
   if (presentation !== "bubble") return null
@@ -303,6 +325,7 @@ export function ActivityGlyph({ label, children }: { label: string; children: Re
   )
 }
 
+/** A button that opens and closes the activity. Usually wraps the pill's icon and text. */
 export function ActivityTrigger({ className, children }: SlotProps) {
   const { expanded, setExpanded } = useActivity()
   return (
@@ -322,14 +345,21 @@ export function ActivityTrigger({ className, children }: SlotProps) {
 }
 
 export type ActivitySharedProps = {
+  /** Matches this element with its copy in the other shape. Unique within one activity. */
   name: string
+  /** Move without resizing. Use it for text, so it isn't stretched mid-morph. @default false */
   text?: boolean
+  /** Corner radius in px for this shape; it animates between the two copies. */
   radius?: number
   className?: string
   style?: React.CSSProperties
   children?: React.ReactNode
 }
 
+/**
+ * An element that keeps its identity between the pill and the card. Give the two copies the same `name` and it
+ * travels and resizes between them. Set `text` for text, so it moves without being stretched.
+ */
 export function ActivityShared({ name, text = false, radius, className, style, children }: ActivitySharedProps) {
   const { id, morph } = useActivity()
   return (
@@ -347,6 +377,7 @@ export function ActivityShared({ name, text = false, radius, className, style, c
 
 const REVEAL_DELAY = 0.08
 
+/** Content that fades in once the card has opened. `delay` is in seconds. */
 export function ActivityReveal({ delay = 0, className, children }: SlotProps & { delay?: number }) {
   const { fade } = useActivity()
   return (
@@ -381,6 +412,7 @@ export type ActivityButtonProps = React.ComponentProps<"button"> & {
   size?: keyof typeof BUTTON_SIZES
 }
 
+/** A button styled to match the surface. Takes every `<button>` prop plus `variant` and `size`. */
 export function ActivityButton({
   variant = "ghost",
   size = "icon-sm",
@@ -402,6 +434,7 @@ export function ActivityButton({
   )
 }
 
+/** A ready-made button that folds the card back into the pill. */
 export function ActivityCollapse() {
   const { setExpanded } = useActivity()
   return (
@@ -411,6 +444,7 @@ export function ActivityCollapse() {
   )
 }
 
+/** A ready-made button that removes the activity. Renders nothing unless the activity can be dismissed. */
 export function ActivityDismiss() {
   const { dismiss } = useActivity()
   if (!dismiss) return null
@@ -423,6 +457,7 @@ export function ActivityDismiss() {
 
 const MIN_PROGRESS = 0.02
 
+/** A small progress ring. `value` is from 0 to 1. */
 export function ActivityProgress({ value, className }: { value: number; className?: string }) {
   return (
     <svg viewBox="0 0 20 20" className={cn("size-5 -rotate-90", className)} aria-hidden>

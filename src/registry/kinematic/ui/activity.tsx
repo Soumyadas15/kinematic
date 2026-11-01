@@ -173,13 +173,24 @@ export const activityTones: Record<ActivityTone, React.CSSProperties | undefined
 }
 
 export type ActivityViewportProps = {
+  /** Where activities appear. They grow away from this edge. @default "bottom-right" */
   position?: ActivityPosition
+  /**
+   * How several activities share the screen.
+   * - `stack`: one pill each.
+   * - `single`: one pill that morphs into whatever started last.
+   * - `island`: the focused one in full, the rest as bubbles beside it.
+   * @default "stack"
+   */
   layout?: ActivityLayout
+  /** `inverted` flips the surface against the page: dark on light, light on dark. @default "default" */
   tone?: ActivityTone
+  /** Extra classes, such as `absolute` to place it inside a container, or `--activity-*` token overrides. */
   className?: string
   style?: React.CSSProperties
 }
 
+/** Shows every activity started with `activity` or the helpers. Render exactly one, near the root of your app. */
 export function ActivityViewport({
   position = "bottom-right",
   layout = "stack",
@@ -189,6 +200,8 @@ export function ActivityViewport({
 }: ActivityViewportProps) {
   const entries = useEntries()
   const anchor = ANCHORS[position]
+
+  React.useEffect(() => activityStore.mountViewport(), [])
 
   return (
     <ActivityAnchorContext.Provider value={anchor}>

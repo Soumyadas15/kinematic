@@ -213,3 +213,32 @@ describe("activity.clear", () => {
     expect(release).toHaveBeenCalledOnce()
   })
 })
+
+describe("cancellation", () => {
+  it("aborts a tracked task's work when it is dismissed", async () => {
+    let signal: AbortSignal | undefined
+    const later = vi.fn(async () => {})
+    const handle = activity.track({
+      title: "Upload",
+      sequential: true,
+      items: [
+        {
+          id: "a",
+          label: "a",
+          run: (_report, abort) => {
+            signal = abort
+            return new Promise((_, reject) => abort.addEventListener("abort", () => reject(new Error("Aborted"))))
+          },
+        },
+        { id: "b", label: "b", run: later },
+      ],
+      outcome: () => ({ label: "Done" }),
+    })
+    expect(signal?.aborted).toBe(false)
+    handle.dismiss()
+    expect(signal?.aborted).toBe(true)
+    await flush()
+    expect(later).not.toHaveBeenCalled()
+    expect(activityStore.getEntries()).toHaveLength(0)
+  })
+})
