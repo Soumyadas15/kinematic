@@ -22,7 +22,8 @@ export function getMDXComponents(components?: MDXComponents) {
     h4: (props) => <Heading as="h4" {...props} />,
     pre: CodeFrame,
     table: (props) => (
-      <div className="docs-table">
+      // Focusable so keyboard users can scroll it sideways on narrow screens.
+      <div className="docs-table" role="region" aria-label="Table" tabIndex={0}>
         <table {...props} />
       </div>
     ),

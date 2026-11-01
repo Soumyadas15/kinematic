@@ -1,6 +1,8 @@
 import AxeBuilder from "@axe-core/playwright"
 import { expect, test, type Page } from "@playwright/test"
 
+import { catalog } from "../../src/components/showcase/catalog"
+
 const WCAG = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]
 
 const LIVE_SURFACE = '[data-slot="activity"]'
@@ -21,12 +23,22 @@ for (const path of ["/", "/showcase", "/playground", "/docs", "/docs/activity"])
   })
 }
 
-test("an open activity has no accessibility violations", async ({ page }) => {
-  await page.goto("/showcase/meeting")
-  await page.locator('[data-slot="activity-trigger"]').click()
-  await expect(page.locator('[data-slot="activity"]')).toHaveAttribute("data-expanded", "true")
-  expect(await audit(page)).toEqual([])
-})
+for (const theme of ["light", "dark"]) {
+  for (const { id } of catalog) {
+    test(`the open ${id} demo has no accessibility violations in ${theme} mode`, async ({ page }) => {
+      await page.addInitScript((value) => localStorage.setItem("theme", value), theme)
+      await page.goto(`/showcase/${id}`)
+      const surface = page.locator(LIVE_SURFACE)
+      await expect(surface).toBeVisible()
+      if (!(await surface.getAttribute("data-expanded"))) await page.locator('[data-slot="activity-trigger"]').click()
+      await expect(surface).toHaveAttribute("data-expanded", "true")
+      // Freeze streaming captions so a word mid-fade isn't read as low contrast.
+      const pause = surface.getByRole("button", { name: "Pause" })
+      if (id === "captions") await pause.click()
+      expect(await audit(page)).toEqual([])
+    })
+  }
+}
 
 test("a task that needs attention has no accessibility violations", async ({ page }) => {
   await page.goto("/playground")
