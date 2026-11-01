@@ -104,7 +104,9 @@ export function FlightActivity() {
             <span className="flex items-center gap-1.5 text-xs text-activity-muted-foreground">
               {FLIGHT.number}
               <span className="size-1 rounded-full bg-current" />
-              <span className="text-emerald-400">{boarding ? "Boarding" : "On time"}</span>
+              <span className="text-[color-mix(in_oklab,var(--color-emerald-500),var(--activity-foreground,var(--popover-foreground))_30%)]">
+                {boarding ? "Boarding" : "On time"}
+              </span>
             </span>
           </span>
           <span className="ml-auto self-start">

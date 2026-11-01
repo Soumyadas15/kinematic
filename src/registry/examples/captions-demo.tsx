@@ -130,7 +130,12 @@ function People({ speaker }: { speaker: string }) {
         <motion.span
           key={name}
           className="flex"
-          animate={{ opacity: name === speaker ? 1 : 0.35, scale: name === speaker ? 1 : 0.88 }}
+          // Quiet speakers lose colour rather than opacity, so they don't turn muddy on dark or washed out on light.
+          animate={{
+            filter: name === speaker ? "grayscale(0)" : "grayscale(0.9)",
+            opacity: name === speaker ? 1 : 0.7,
+            scale: name === speaker ? 1 : 0.88,
+          }}
           transition={{ duration: 0.35, ease: "easeOut" }}
         >
           <GradientOrb seed={name} animated={name === speaker} className="size-6" />

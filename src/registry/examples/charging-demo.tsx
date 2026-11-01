@@ -123,9 +123,9 @@ function Liquid({ charge }: { charge: Charge }) {
       <div className="absolute inset-0 flex items-end justify-between p-4">
         <ActivityShared name="level" text className="text-5xl font-medium tracking-tight tabular-nums">
           {charge.level}
-          <span className="text-xl text-activity-muted-foreground">%</span>
+          <span className="text-xl text-activity-foreground/70">%</span>
         </ActivityShared>
-        <span className="pb-1.5 text-xs text-activity-muted-foreground">{detail(charge)}</span>
+        <span className="pb-1.5 text-xs text-activity-foreground/85">{detail(charge)}</span>
       </div>
     </div>
   )
