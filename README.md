@@ -11,7 +11,7 @@ It sits small when you glance at it and opens up when you look. Start something 
 In a project that already uses shadcn/ui:
 
 ```bash
-npx shadcn@latest add https://kinematic.design/r/activity.json
+npx shadcn@latest add @kinematic/activity
 ```
 
 Render the viewport once, near the root of your app:
