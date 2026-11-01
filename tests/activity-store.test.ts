@@ -110,6 +110,31 @@ describe("activity.track", () => {
     expect(task(handle.id).outcome).toEqual({ label: "Report ready" })
   })
 
+  it("runs a retry once even when it is triggered twice", async () => {
+    let attempts = 0
+    const handle = activity.track({
+      title: "Upload",
+      items: [
+        {
+          id: "a",
+          label: "a",
+          run: async () => {
+            attempts += 1
+            if (attempts === 1) throw new Error("Offline")
+          },
+        },
+      ],
+      outcome: () => ({ label: "Done" }),
+    })
+    await flush()
+    const { retry } = task(handle.id).items[0]
+    retry?.()
+    retry?.()
+    await flush()
+    expect(attempts).toBe(2)
+    expect(task(handle.id).outcome).toEqual({ label: "Done" })
+  })
+
   it("uses a fallback message for non-Error rejections", async () => {
     const handle = activity.track({
       title: "Upload",

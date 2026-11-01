@@ -100,10 +100,25 @@ describe("ActivityViewport", () => {
     expect(screen.getByRole("button", { name: "Show Deploying" })).toBeTruthy()
   })
 
-  it("announces activity politely", () => {
+  it("announces failures and outcomes, not every progress tick", () => {
     render(<ActivityViewport />)
-    startUpload()
-    expect(screen.getByRole("status").getAttribute("aria-live")).toBe("polite")
+    const handle = startUpload()
+    const status = screen.getByRole("status")
+    expect(status.textContent).toBe("")
+    expect(status.querySelector("button")).toBeNull()
+
+    act(() => handle.progress("deck", 0.5))
+    expect(status.textContent).toBe("")
+
+    act(() => handle.fail("notes", { error: "Offline" }))
+    expect(status.textContent).toBe("Importing 2 documents: 1 needs attention")
+
+    act(() => {
+      handle.complete("deck")
+      handle.complete("notes")
+      handle.finish({ label: "2 documents ready" })
+    })
+    expect(screen.getByRole("status").textContent).toBe("2 documents ready")
   })
 })
 

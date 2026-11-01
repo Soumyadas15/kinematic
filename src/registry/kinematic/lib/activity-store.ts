@@ -228,7 +228,7 @@ function track({ title, items, sequential = false, outcome }: ActivityTrackOptio
 
   const settle = () => {
     const task = findTask(handle.id)
-    if (task && task.items.every((item) => item.status === "done")) handle.finish(outcome(task))
+    if (task && !task.outcome && task.items.every((item) => item.status === "done")) handle.finish(outcome(task))
   }
 
   const run = async (item: Item): Promise<boolean> => {
@@ -250,6 +250,8 @@ function track({ title, items, sequential = false, outcome }: ActivityTrackOptio
   }
 
   const retry = async (item: Item) => {
+    const current = findTask(handle.id)?.items.find((entry) => entry.id === item.id)
+    if (current?.status !== "failed") return
     if (!(await run(item))) return
     if (sequential) await runFrom(items.indexOf(item) + 1)
     settle()

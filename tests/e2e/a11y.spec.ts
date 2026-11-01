@@ -27,3 +27,35 @@ test("an open activity has no accessibility violations", async ({ page }) => {
   await expect(page.locator('[data-slot="activity"]')).toHaveAttribute("data-expanded", "true")
   expect(await audit(page)).toEqual([])
 })
+
+test("a task that needs attention has no accessibility violations", async ({ page }) => {
+  await page.goto("/playground")
+  await page.getByRole("button", { name: /^Upload/ }).click()
+  await expect(page.locator('[data-slot="activity-compact"]').getByText(/needs attention/)).toBeVisible({
+    timeout: 15_000,
+  })
+  expect(await audit(page)).toEqual([])
+  await page.locator('[data-slot="activity-trigger"]').click()
+  await expect(page.locator('[data-slot="activity"]')).toHaveAttribute("data-expanded", "true")
+  expect(await audit(page)).toEqual([])
+})
+
+test("reduced motion keeps the timer digits still", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" })
+  await page.goto("/playground")
+  await page.getByRole("button", { name: /^Focus timer/ }).click()
+  await expect(page.locator('[data-slot="activity"]')).toBeVisible()
+  const moved = await page.evaluate(async () => {
+    const offsets = new Set<string>()
+    const until = performance.now() + 2500
+    while (performance.now() < until) {
+      document.querySelectorAll('[data-slot="activity"] span.inline-block').forEach((digit) => {
+        const { transform } = getComputedStyle(digit)
+        if (transform !== "none" && transform !== "matrix(1, 0, 0, 1, 0, 0)") offsets.add(transform)
+      })
+      await new Promise((resolve) => requestAnimationFrame(resolve))
+    }
+    return [...offsets]
+  })
+  expect(moved).toEqual([])
+})

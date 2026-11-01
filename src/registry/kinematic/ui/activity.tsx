@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { AnimatePresence, motion } from "motion/react"
+import { AnimatePresence, motion, MotionConfig } from "motion/react"
 
 import { cn } from "@/lib/utils"
 import { activityStore, type ActivityEntry } from "@/registry/kinematic/lib/activity-store"
@@ -39,6 +39,15 @@ const ANCHORS: Record<ActivityPosition, ActivityAnchor> = {
 }
 
 const JUSTIFY = { start: "justify-start", center: "justify-center", end: "justify-end" } as const
+
+// Room the bubbles take beside a compact primary (54px bubble + 8px gap each), so it truncates instead of clipping.
+const BUBBLE_RESERVE = [
+  "",
+  "[--activity-reserve:62px]",
+  "[--activity-reserve:124px]",
+  "[--activity-reserve:186px]",
+  "[--activity-reserve:248px]",
+]
 
 function useEntries() {
   return React.useSyncExternalStore(activityStore.subscribe, activityStore.getEntries, () => NO_ENTRIES)
@@ -117,6 +126,7 @@ function IslandLayout({ entries, anchor }: { entries: ActivityEntry[]; anchor: A
   const overflow = others.slice(MAX_BUBBLES)
   const wide = primary ? activityStore.isExpanded(primary) : false
   const top = anchor.y === "start"
+  const reserve = BUBBLE_RESERVE[bubbles.length + (overflow.length > 0 ? 1 : 0)]
 
   return (
     <div
@@ -132,7 +142,7 @@ function IslandLayout({ entries, anchor }: { entries: ActivityEntry[]; anchor: A
           <ViewportEntry
             key={primary.id}
             entry={primary}
-            className={cn("min-w-0", wide && (top ? "order-first basis-full" : "order-last basis-full"))}
+            className={cn("min-w-0", wide ? (top ? "order-first basis-full" : "order-last basis-full") : reserve)}
           />
         )}
         {bubbles.map((entry) => (
@@ -193,9 +203,11 @@ export function ActivityViewport({
         )}
         style={{ ...activityTones[tone], ...style }}
       >
-        {layout === "stack" && <StackLayout entries={entries} />}
-        {layout === "single" && <SingleLayout entries={entries} />}
-        {layout === "island" && <IslandLayout entries={entries} anchor={anchor} />}
+        <MotionConfig reducedMotion="user">
+          {layout === "stack" && <StackLayout entries={entries} />}
+          {layout === "single" && <SingleLayout entries={entries} />}
+          {layout === "island" && <IslandLayout entries={entries} anchor={anchor} />}
+        </MotionConfig>
       </section>
     </ActivityAnchorContext.Provider>
   )
@@ -203,6 +215,7 @@ export function ActivityViewport({
 
 export {
   Activity,
+  ActivityAnnounce,
   ActivityButton,
   ActivityCollapse,
   ActivityCompact,

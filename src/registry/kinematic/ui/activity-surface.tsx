@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { animate, LayoutGroup, motion, useMotionValue, type Transition } from "motion/react"
+import { animate, LayoutGroup, motion, MotionConfig, useMotionValue, type Transition } from "motion/react"
 import { ChevronDown, X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -32,10 +32,6 @@ type ActivityContextValue = {
 const ActivityContext = React.createContext<ActivityContextValue | null>(null)
 
 export const ActivityAnchorContext = React.createContext<ActivityAnchor>({ x: "center", y: "start" })
-
-const JUSTIFY = { start: "justify-start", center: "justify-center", end: "justify-end" } as const
-
-const ALIGN = { start: "items-start", end: "items-end" } as const
 
 export function useActivity() {
   const context = React.useContext(ActivityContext)
@@ -197,7 +193,9 @@ export function Activity({
   if (presentation === "hidden") {
     return (
       <ActivityContext.Provider value={context}>
-        <div hidden>{children}</div>
+        <MotionConfig reducedMotion="user">
+          <div hidden>{children}</div>
+        </MotionConfig>
       </ActivityContext.Provider>
     )
   }
@@ -206,54 +204,56 @@ export function Activity({
 
   return (
     <ActivityContext.Provider value={context}>
-      <motion.div
-        ref={surfaceRef}
-        data-slot="activity"
-        data-phase={phase}
-        data-expanded={isExpanded || undefined}
-        data-presentation={presentation}
-        role="status"
-        aria-live="polite"
-        onKeyDown={(event) => {
-          if (event.key === "Escape" && isExpanded) setOpen(false)
-        }}
-        className={cn(
-          "pointer-events-auto flex max-w-full overflow-hidden border border-activity-border bg-activity text-activity-foreground shadow-lg shadow-black/[0.04] dark:shadow-black/30",
-          JUSTIFY[anchor.x],
-          ALIGN[anchor.y],
-          className
-        )}
-        style={{ width: size.width, height: size.height }}
-        initial={{ opacity: 0, y: direction * ENTER_OFFSET, filter: "blur(6px)", borderRadius: COMPACT_RADIUS }}
-        animate={{
-          opacity: 1,
-          y: 0,
-          filter: "blur(0px)",
-          borderRadius: isExpanded ? EXPANDED_RADIUS : COMPACT_RADIUS,
-        }}
-        exit={{ opacity: 0, y: direction * EXIT_OFFSET, filter: "blur(6px)" }}
-        transition={morph}
-      >
-        <div
-          ref={contentRef}
-          data-slot="activity-content"
+      <MotionConfig reducedMotion="user">
+        <motion.div
+          ref={surfaceRef}
+          data-slot="activity"
+          data-phase={phase}
+          data-expanded={isExpanded || undefined}
+          data-presentation={presentation}
+          onKeyDown={(event) => {
+            if (event.key === "Escape" && isExpanded) setOpen(false)
+          }}
+          // Content stays pinned to the top-left while the window around it grows or shrinks, so leading
+          // elements keep their inset and the trailing edge reveals, wherever the viewport is anchored.
           className={cn(
-            "shrink-0 p-2",
-            isExpanded ? "w-[var(--activity-width,22rem)]" : "w-max max-w-[var(--activity-width,22rem)]"
+            "pointer-events-auto flex max-w-full items-start justify-start overflow-hidden border border-activity-border bg-activity text-activity-foreground shadow-lg shadow-black/[0.04] dark:shadow-black/30",
+            className
           )}
+          style={{ width: size.width, height: size.height }}
+          initial={{ opacity: 0, y: direction * ENTER_OFFSET, filter: "blur(6px)", borderRadius: COMPACT_RADIUS }}
+          animate={{
+            opacity: 1,
+            y: 0,
+            filter: "blur(0px)",
+            borderRadius: isExpanded ? EXPANDED_RADIUS : COMPACT_RADIUS,
+          }}
+          exit={{ opacity: 0, y: direction * EXIT_OFFSET, filter: "blur(6px)" }}
+          transition={morph}
         >
-          <LayoutGroup id={key}>
-            <motion.div
-              key={key}
-              initial={{ opacity: 0, filter: "blur(4px)" }}
-              animate={{ opacity: 1, filter: "blur(0px)" }}
-              transition={fade}
-            >
-              {children}
-            </motion.div>
-          </LayoutGroup>
-        </div>
-      </motion.div>
+          <div
+            ref={contentRef}
+            data-slot="activity-content"
+            className={cn(
+              "shrink-0 p-2",
+              isExpanded
+                ? "w-[var(--activity-width,22rem)]"
+                : "w-max max-w-[min(var(--activity-width,22rem),calc(100vw-2rem-var(--activity-reserve,0px)))]"
+            )}
+          >
+            <LayoutGroup id={key}>
+              <motion.div
+                key={key}
+                initial={{ opacity: 0, filter: "blur(4px)" }}
+                animate={{ opacity: 1, filter: "blur(0px)" }}
+                transition={fade}
+              >
+                {children}
+              </motion.div>
+            </LayoutGroup>
+          </div>
+        </motion.div>
+      </MotionConfig>
     </ActivityContext.Provider>
   )
 }
@@ -277,6 +277,14 @@ export function ActivityExpanded({ className, children }: SlotProps) {
     <div data-slot="activity-expanded" className={cn("flex w-full flex-col gap-1", className)}>
       {children}
     </div>
+  )
+}
+
+export function ActivityAnnounce({ children }: { children?: React.ReactNode }) {
+  return (
+    <span role="status" data-slot="activity-announce" className="sr-only">
+      {children}
+    </span>
   )
 }
 

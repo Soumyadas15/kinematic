@@ -9,6 +9,7 @@ import { createAudioContext } from "@/registry/kinematic/lib/activity-audio"
 import { GradientOrb } from "@/registry/kinematic/ui/gradient-orb"
 import {
   activity,
+  ActivityAnnounce,
   ActivityButton,
   ActivityCollapse,
   ActivityCompact,
@@ -72,6 +73,10 @@ function formatElapsed(ms: number) {
   return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`
 }
 
+function cssUrl(url: string) {
+  return `url(${JSON.stringify(url)})`
+}
+
 function wait(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
@@ -124,7 +129,8 @@ function createCallControls(
     levels.user.set(0)
   }
 
-  const connect = () => state.set((call) => ({ ...call, status: "live", startedAt: Date.now() }))
+  const connect = () =>
+    state.set((call) => (call.status === "connecting" ? { ...call, status: "live", startedAt: Date.now() } : call))
 
   const say = async (speaker: CallSpeaker, text: string) => {
     lineCount += 1
@@ -153,15 +159,25 @@ function createCallControls(
     state.set((call) => ({ ...call, muted }))
   }
 
-  const end = () => {
-    if (isEnded()) return
+  const finish = () => {
     release()
     state.set((call) => ({ ...call, status: "ended", endedAt: Date.now(), speaking: null }))
     onEnd?.()
+  }
+
+  const end = () => {
+    if (isEnded()) return
+    finish()
     lingerTimeout = setTimeout(dismiss, ENDED_LINGER_MS)
   }
 
-  return { connect, say, setLevel, mute, end, isEnded, release, levels }
+  // Dismissing or replacing a live call ends it: the microphone is released either way.
+  const close = () => {
+    if (isEnded()) release()
+    else finish()
+  }
+
+  return { connect, say, setLevel, mute, end, isEnded, close, levels }
 }
 
 type CallControls = ReturnType<typeof createCallControls>
@@ -185,13 +201,19 @@ function statusText(call: CallSnapshot, elapsed: number) {
   return `${formatElapsed(elapsed)} · ${label}`
 }
 
+function announcement(call: CallSnapshot) {
+  if (call.status === "connecting") return `Calling ${call.name}`
+  if (call.status === "ended") return `Call with ${call.name} ended`
+  return call.muted ? `On call with ${call.name}, muted` : `On call with ${call.name}`
+}
+
 function Avatar({ call, large }: { call: CallSnapshot; large: boolean }) {
   return (
     <ActivityShared
       name="avatar"
       radius={999}
       className={cn("relative shrink-0 overflow-hidden bg-cover bg-center", large ? "size-12" : "size-9")}
-      style={call.avatar ? { backgroundImage: `url(${call.avatar})` } : undefined}
+      style={call.avatar ? { backgroundImage: cssUrl(call.avatar) } : undefined}
     >
       {!call.avatar && (
         <GradientOrb
@@ -336,6 +358,7 @@ function CallActivity({ state, controls }: { state: ActivityState<CallSnapshot>;
   const elapsed = useElapsed(call)
   return (
     <>
+      <ActivityAnnounce>{announcement(call)}</ActivityAnnounce>
       <ActivityGlyph label={call.name}>
         <Avatar call={call} large={false} />
       </ActivityGlyph>
@@ -363,7 +386,7 @@ export function startCall({ name, avatar, stream, id = "call", onEnd }: CallOpti
     return <CallActivity state={state} controls={controls} />
   }
 
-  const handle = activity.show({ id, view: VoiceCall, onDismiss: controls.release })
+  const handle = activity.show({ id, view: VoiceCall, onDismiss: controls.close })
   const { connect, say, setLevel, mute, end, isEnded } = controls
   return { ...handle, connect, say, setLevel, mute, end, isEnded }
 }

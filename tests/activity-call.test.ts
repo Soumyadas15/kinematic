@@ -30,6 +30,25 @@ describe("startCall", () => {
     expect(activityStore.getEntries()).toHaveLength(0)
   })
 
+  it("stays ended when a connection resolves after hanging up", () => {
+    const call = startCall({ name: "Ada" })
+    call.end()
+    call.connect()
+    expect(call.isEnded()).toBe(true)
+  })
+
+  it("ends a live call and releases the microphone when it is dismissed", () => {
+    const onEnd = vi.fn()
+    const track = { enabled: true, stop: vi.fn() }
+    const stream = { getTracks: () => [track], getAudioTracks: () => [track] } as unknown as MediaStream
+    const call = startCall({ name: "Ada", stream, onEnd })
+    call.connect()
+    call.dismiss()
+    expect(call.isEnded()).toBe(true)
+    expect(onEnd).toHaveBeenCalledOnce()
+    expect(track.stop).toHaveBeenCalled()
+  })
+
   it("does not dismiss a newer call that reuses the id", () => {
     const first = startCall({ name: "Ada" })
     first.end()

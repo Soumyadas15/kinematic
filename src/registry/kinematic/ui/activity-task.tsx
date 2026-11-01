@@ -5,6 +5,7 @@ import { AlertCircle, Check, ChevronDown, FileText, RotateCw } from "lucide-reac
 import { cn } from "@/lib/utils"
 import type { ActivityItem, ActivityTask } from "@/registry/kinematic/lib/activity-store"
 import {
+  ActivityAnnounce,
   ActivityButton,
   ActivityCollapse,
   ActivityCompact,
@@ -22,6 +23,11 @@ const STACK_SIZE = 3
 const TILE_RADIUS_ROUND = 18
 const TILE_RADIUS_SQUARE = 10
 const ROW_STAGGER = 0.03
+// Status hues pulled toward the foreground so small text stays readable on light, dark and inverted surfaces.
+const ATTENTION_TEXT =
+  "text-[color-mix(in_oklab,var(--color-amber-500),var(--activity-foreground,var(--popover-foreground))_40%)]"
+const ERROR_TEXT =
+  "text-[color-mix(in_oklab,var(--color-red-500),var(--activity-foreground,var(--popover-foreground))_25%)]"
 
 export type TaskPhase = "running" | "attention" | "done"
 
@@ -42,6 +48,11 @@ function taskSummary(task: ActivityTask) {
   if (failed === 0) return `${done} of ${total} done`
   if (done === 0) return `${failed} ${needs}`
   return `${done} ready · ${failed} ${needs}`
+}
+
+function taskAnnouncement(task: ActivityTask) {
+  if (task.outcome) return task.outcome.label
+  return tally(task).failed > 0 ? `${task.title}: ${taskSummary(task)}` : ""
 }
 
 function taskProgress(task: ActivityTask) {
@@ -90,8 +101,8 @@ function TaskHeadline({ task }: { task: ActivityTask }) {
           name="summary"
           text
           className={cn(
-            "truncate text-xs text-activity-muted-foreground tabular-nums",
-            phase === "attention" && "text-amber-500"
+            "truncate text-xs tabular-nums",
+            phase === "attention" ? ATTENTION_TEXT : "text-activity-muted-foreground"
           )}
         >
           <span className="flex items-center gap-1">
@@ -178,7 +189,7 @@ function TaskRow({ item, index }: { item: ActivityItem; index: number }) {
       <Tile item={item} round={false} />
       <ActivityReveal delay={index * ROW_STAGGER} className="flex min-w-0 flex-1 flex-col">
         <span className="truncate text-sm">{item.label}</span>
-        <span className={cn("truncate text-xs text-activity-muted-foreground", failed && "text-red-500")}>
+        <span className={cn("truncate text-xs", failed ? ERROR_TEXT : "text-activity-muted-foreground")}>
           {failed ? item.error : item.meta}
         </span>
       </ActivityReveal>
@@ -217,6 +228,7 @@ function TaskExpanded({ task }: { task: ActivityTask }) {
 export function ActivityTaskView({ task }: { task: ActivityTask }) {
   return (
     <>
+      <ActivityAnnounce>{taskAnnouncement(task)}</ActivityAnnounce>
       <TaskGlyph task={task} />
       <TaskCompact task={task} />
       <TaskExpanded task={task} />

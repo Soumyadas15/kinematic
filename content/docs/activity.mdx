@@ -296,10 +296,10 @@ Returns the view handle plus `toggle()`, `pause()`, `seek(ratio)`, `skip(seconds
 | Option | Type | Description |
 | --- | --- | --- |
 | `name` | `string` | Who you're talking to. |
-| `avatar` | `string` | Optional image URL. Initials are used otherwise. |
+| `avatar` | `string` | Optional image URL. A gradient orb made from `name` is used otherwise. |
 | `stream` | `MediaStream` | Optional microphone stream. Its level drives the bars, and it's stopped when the call ends. |
 | `id` | `string` | Defaults to `"call"`. |
-| `onEnd` | `() => void` | Called when the call ends. |
+| `onEnd` | `() => void` | Called once when the call ends, including when a live call is dismissed or replaced. |
 
 Returns the view handle plus `connect()`, `say(speaker, text)`, `setLevel(speaker, value)`, `mute(muted)`, `end()` and `isEnded()`. `speaker` is `"agent"` or `"user"`.
 
@@ -334,7 +334,16 @@ Returns the view handle plus `pause()`, `resume()`, `add(minutes)` and `end()`.
 | `ActivityGlyph` | `label` (required), used for its accessible name as a bubble. |
 | `ActivityButton` | Every `button` prop, plus `variant` (`ghost`, `soft`, `solid`, `danger`) and `size` (`icon-sm`, `icon-md`, `icon-lg`, `sm`, `lg`). |
 | `ActivityProgress` | `value` from 0 to 1, `className`. |
+| `ActivityAnnounce` | `children`: a short message for screen readers. Change it when something worth hearing happens. |
 
 ## Accessibility
 
-Each activity is a polite live region, so progress and results are announced without stealing focus. Status is never color alone: failures are written out with a Retry button, and "needs attention" comes with an icon. With reduced motion, shapes change instantly.
+Activities never steal focus. Each one announces through a polite, visually hidden status message instead of reading the whole surface on every change: a task speaks up when something needs attention and when it settles, a call when it connects, mutes or ends, and a timer when it pauses or finishes. Progress ticks and the running clock stay quiet.
+
+In your own activities, render `ActivityAnnounce` with a short message and change it when something worth hearing happens:
+
+```tsx
+<ActivityAnnounce>{status === "arrived" ? "Your order has arrived" : ""}</ActivityAnnounce>
+```
+
+Status is never color alone: failures are written out with a Retry button, and "needs attention" comes with an icon. The player's waveform is a slider: arrow keys skip 5 seconds, Home and End jump to the start and end. With reduced motion, shapes change instantly and nothing slides or rolls.
