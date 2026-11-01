@@ -6,7 +6,7 @@ description: Install Activity and show your first one.
 <Steps>
 <Step title="Install">
 
-In a project that already uses shadcn/ui:
+In a project that already uses shadcn/ui with Tailwind CSS v4:
 
 <InstallCommand items={["activity"]} />
 
@@ -18,7 +18,7 @@ Render it once, near the root of your app. It's where every activity appears.
 ```tsx title="app/layout.tsx"
 import { ActivityViewport } from "@/components/ui/activity"
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>

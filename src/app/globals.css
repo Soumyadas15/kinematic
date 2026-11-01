@@ -242,8 +242,13 @@
   .docs-table {
     margin-block: 1rem;
     overflow-x: auto;
+    outline: none;
     border: 1px solid var(--border);
     border-radius: 0.75rem;
+  }
+
+  .docs-table:focus-visible {
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 50%, transparent);
   }
 
   .docs-prose .docs-table table {

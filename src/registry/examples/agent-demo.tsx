@@ -2,8 +2,8 @@
 
 import * as React from "react"
 import { motion } from "motion/react"
-import { Check, FilePen, FileText, LoaderCircle, Search, Terminal, type LucideIcon } from "lucide-react"
 
+import { cn } from "@/lib/utils"
 import {
   activity,
   ActivityButton,
@@ -19,7 +19,7 @@ import {
 } from "@/registry/kinematic/ui/activity"
 import { GradientOrb } from "@/registry/kinematic/ui/gradient-orb"
 
-type Step = { icon: LucideIcon; label: string; detail: string; thought: string; approval?: string }
+type Step = { label: string; detail: string; thought: string; approval?: string }
 type Status = "working" | "waiting" | "done"
 
 const TASK = "Refactor auth session"
@@ -27,22 +27,11 @@ const STEP_MS = 1800
 const TYPE_MS = 22
 
 const STEPS: Step[] = [
-  { icon: FileText, label: "Read session.ts", detail: "214 lines", thought: "Reading how sessions refresh today" },
-  {
-    icon: Search,
-    label: "Find refreshToken",
-    detail: "6 matches",
-    thought: "Looking for every caller of refreshToken",
-  },
-  { icon: FilePen, label: "Edit session.ts", detail: "+18 −4", thought: "Moving the refresh into the session layer" },
-  {
-    icon: Terminal,
-    label: "Run tests",
-    detail: "24 passed",
-    thought: "Checking nothing broke",
-    approval: "pnpm test auth",
-  },
-  { icon: FilePen, label: "Edit middleware.ts", detail: "+6 −2", thought: "Updating the middleware to match" },
+  { label: "Read session.ts", detail: "214 lines", thought: "Reading how sessions refresh today" },
+  { label: "Find refreshToken", detail: "6 matches", thought: "Looking for every caller of refreshToken" },
+  { label: "Edit session.ts", detail: "+18 −4", thought: "Moving the refresh into the session layer" },
+  { label: "Run tests", detail: "24 passed", thought: "Checking nothing broke", approval: "pnpm test auth" },
+  { label: "Edit middleware.ts", detail: "+6 −2", thought: "Updating the middleware to match" },
 ]
 
 function useAgent() {
@@ -94,31 +83,10 @@ function Shimmer({ children }: { children: React.ReactNode }) {
   )
 }
 
-function Diff() {
-  return (
-    <span className="font-mono text-xs tabular-nums">
-      <span className="text-emerald-400">+24</span> <span className="text-red-400">−6</span>
-    </span>
-  )
-}
-
-const BADGES: Record<Status, string> = {
-  working: "",
-  waiting: "bg-amber-400",
-  done: "bg-emerald-500",
-}
-
 function AgentOrb({ status, large }: { status: Status; large: boolean }) {
   return (
-    <ActivityShared name="orb" radius={999} className={`relative grid shrink-0 ${large ? "size-10" : "size-9"}`}>
-      <GradientOrb seed="agent" animated={status === "working"} className="size-full" />
-      {status !== "working" && (
-        <span
-          className={`absolute top-[85.36%] left-[85.36%] grid size-3.5 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full text-black ring-2 ring-activity ${BADGES[status]}`}
-        >
-          {status === "done" && <Check className="size-2.5" strokeWidth={3.5} aria-hidden />}
-        </span>
-      )}
+    <ActivityShared name="orb" radius={999} className={cn("grid shrink-0", large ? "size-10" : "size-9")}>
+      <GradientOrb seed="agent" animated={status === "working"} aria-hidden className="size-full" />
     </ActivityShared>
   )
 }
@@ -128,25 +96,68 @@ function headline(status: Status) {
   return status === "done" ? "Refactor done" : TASK
 }
 
+function Title({ status, className }: { status: Status; className: string }) {
+  return (
+    <ActivityShared name="title" text className={cn("truncate font-medium", className)}>
+      {status === "working" ? <Shimmer>{TASK}</Shimmer> : headline(status)}
+    </ActivityShared>
+  )
+}
+
+function Marker({ state }: { state: "done" | "working" | "waiting" | "pending" }) {
+  return (
+    <span className="relative grid size-4 place-items-center">
+      {state === "working" && (
+        <span className="absolute size-2 rounded-full bg-activity-foreground/40 motion-safe:animate-ping" />
+      )}
+      <span
+        className={cn(
+          "relative size-1.5 rounded-full transition-colors duration-300",
+          state === "done" && "bg-activity-foreground/60",
+          state === "working" && "bg-activity-foreground",
+          state === "waiting" && "size-2 bg-transparent ring-[1.5px] ring-activity-foreground",
+          state === "pending" && "bg-activity-foreground/20"
+        )}
+      />
+    </span>
+  )
+}
+
 function StepRow({ item, index, agent }: { item: Step; index: number; agent: Agent }) {
   const done = index < agent.step
   const current = index === agent.step
   const waiting = current && agent.status === "waiting"
-  const Icon = item.icon
+  const last = index === STEPS.length - 1
+  const state = done ? "done" : waiting ? "waiting" : current ? "working" : "pending"
 
   return (
-    <li className={`flex items-center gap-3 transition-opacity duration-300 ${done || current ? "" : "opacity-50"}`}>
+    <li className="relative grid grid-cols-[1rem_1fr_auto] gap-x-3">
+      {!last && <span aria-hidden className="absolute top-[18px] -bottom-1.5 left-2 w-px bg-activity-foreground/15" />}
+      <span className="flex h-5 items-center">
+        <Marker state={state} />
+      </span>
       <span
-        className={`grid size-7 shrink-0 place-items-center rounded-[10px] ${waiting ? "bg-amber-400/15 text-amber-400" : "bg-activity-muted"}`}
+        className={cn(
+          "truncate text-sm leading-5 transition-colors duration-300",
+          done && "text-activity-foreground/70",
+          current && "text-activity-foreground",
+          state === "pending" && "text-activity-muted-foreground"
+        )}
       >
-        <Icon className="size-3.5" aria-hidden />
+        {item.label}
+        {current && <span className="sr-only">{waiting ? ", waiting for approval" : ", running"}</span>}
       </span>
-      <span className="min-w-0 flex-1 truncate text-sm">{item.label}</span>
-      <span className="shrink-0 font-mono text-xs text-activity-muted-foreground tabular-nums">
-        {done && item.detail}
-        {current && !waiting && <LoaderCircle className="size-3.5 animate-spin" aria-label="Running" />}
-        {waiting && <span className="text-amber-400">Waiting</span>}
-      </span>
+      <span className="text-xs leading-5 text-activity-muted-foreground tabular-nums">{done && item.detail}</span>
+      {waiting && item.approval && (
+        <motion.code
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+          className="col-start-2 col-end-4 block truncate pt-1 font-mono text-xs text-activity-muted-foreground"
+        >
+          $ {item.approval}
+        </motion.code>
+      )}
     </li>
   )
 }
@@ -166,36 +177,28 @@ export function AgentActivity() {
       <ActivityCompact className={status === "waiting" ? "pr-1" : "pr-3"}>
         <ActivityTrigger className="min-w-0">
           <AgentOrb status={status} large={false} />
-          <ActivityShared name="title" text className="min-w-0 truncate text-sm font-medium">
-            {status === "working" ? <Shimmer>{TASK}</Shimmer> : headline(status)}
-          </ActivityShared>
+          <Title status={status} className="min-w-0 text-sm" />
         </ActivityTrigger>
-        <span className="ml-auto flex shrink-0 items-center gap-2 pl-1">
-          {status === "working" && (
-            <span className="text-xs text-activity-muted-foreground tabular-nums">
-              {agent.step + 1}/{STEPS.length}
-            </span>
-          )}
+        <span className="ml-auto flex shrink-0 items-center gap-2 pl-1 text-xs text-activity-muted-foreground tabular-nums">
+          {status === "working" && `${agent.step + 1} of ${STEPS.length}`}
           {status === "waiting" && (
             <ActivityButton variant="solid" size="sm" onClick={agent.approve}>
               Allow
             </ActivityButton>
           )}
-          {status === "done" && <Diff />}
+          {status === "done" && "+24 −6"}
         </span>
       </ActivityCompact>
 
-      <ActivityExpanded className="gap-4 p-1.5">
+      <ActivityExpanded className="gap-5 p-1.5">
         <div className="flex items-center gap-3">
           <AgentOrb status={status} large />
           <span className="flex min-w-0 flex-col">
-            <ActivityShared name="title" text className="truncate text-[15px] font-medium">
-              {status === "working" ? <Shimmer>{TASK}</Shimmer> : headline(status)}
-            </ActivityShared>
+            <Title status={status} className="text-[15px]" />
             <span className="truncate text-xs text-activity-muted-foreground">
               {status === "working" && <Typewriter key={current.thought} text={current.thought} />}
               {status === "waiting" && "Wants to run a command"}
-              {status === "done" && "2 files changed, all tests passing"}
+              {status === "done" && "2 files changed · all tests passing"}
             </span>
           </span>
           <span className="ml-auto flex self-start">
@@ -205,32 +208,26 @@ export function AgentActivity() {
         </div>
 
         <ActivityReveal>
-          <ol className="flex flex-col gap-2.5 rounded-2xl bg-activity-muted/50 p-3">
+          <ol className="flex flex-col gap-2 px-1.5">
             {STEPS.map((item, index) => (
               <StepRow key={item.label} item={item} index={index} agent={agent} />
             ))}
           </ol>
         </ActivityReveal>
 
-        {status === "waiting" && current.approval && (
-          <motion.div
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-3 rounded-2xl border border-amber-400/25 bg-amber-400/10 py-2 pr-2 pl-3.5"
-          >
-            <code className="min-w-0 flex-1 truncate font-mono text-xs">{current.approval}</code>
-            <ActivityButton variant="soft" size="sm" onClick={dismiss}>
+        {status === "waiting" && (
+          <ActivityReveal className="flex justify-end gap-2">
+            <ActivityButton variant="ghost" size="sm" onClick={dismiss}>
               Deny
             </ActivityButton>
             <ActivityButton variant="solid" size="sm" onClick={agent.approve}>
               Allow
             </ActivityButton>
-          </motion.div>
+          </ActivityReveal>
         )}
 
         {status === "done" && (
-          <ActivityReveal className="flex items-center justify-between gap-3 pl-1">
-            <Diff />
+          <ActivityReveal className="flex justify-end">
             <ActivityButton variant="solid" size="sm">
               Review changes
             </ActivityButton>

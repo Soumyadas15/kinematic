@@ -26,18 +26,18 @@ describe("startTimer", () => {
     act(() => {
       timer = startTimer({ label: "Focus", minutes: 1, onDone: done })
     })
-    expect(screen.getByLabelText("01:00")).toBeTruthy()
+    expect(screen.getByText("01:00")).toBeTruthy()
 
     at(10)
-    await waitFor(() => expect(screen.getByLabelText("00:50")).toBeTruthy())
+    await waitFor(() => expect(screen.getByText("00:50")).toBeTruthy())
 
     act(() => timer.pause())
     at(30)
     expect(screen.getByText("Paused")).toBeTruthy()
-    expect(screen.getByLabelText("00:50")).toBeTruthy()
+    expect(screen.getByText("00:50")).toBeTruthy()
 
     act(() => timer.add(1))
-    expect(screen.getByLabelText("01:50")).toBeTruthy()
+    expect(screen.getByText("01:50")).toBeTruthy()
 
     act(() => timer.resume())
     at(30 + 110)
@@ -46,5 +46,20 @@ describe("startTimer", () => {
 
     act(() => timer.end())
     expect(done).toHaveBeenCalledOnce()
+  })
+
+  it("finishes on time while it is out of sight, and not after it is dismissed", () => {
+    vi.useFakeTimers({ toFake: ["Date", "setTimeout", "clearTimeout"] })
+    at(0)
+    const done = vi.fn()
+    startTimer({ minutes: 1, onDone: done })
+    vi.advanceTimersByTime(60_000)
+    expect(done).toHaveBeenCalledOnce()
+
+    const dismissed = vi.fn()
+    const timer = startTimer({ id: "other", minutes: 1, onDone: dismissed })
+    timer.dismiss()
+    vi.advanceTimersByTime(60_000)
+    expect(dismissed).not.toHaveBeenCalled()
   })
 })

@@ -8,7 +8,7 @@ It sits small when you glance at it and opens up when you look. Start something 
 
 ## Install
 
-In a project that already uses shadcn/ui:
+In a project that already uses shadcn/ui with Tailwind CSS v4:
 
 ```bash
 npx shadcn@latest add @kinematic/activity

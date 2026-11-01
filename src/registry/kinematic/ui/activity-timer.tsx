@@ -1,12 +1,13 @@
 "use client"
 
 import * as React from "react"
-import { AnimatePresence, motion } from "motion/react"
+import { AnimatePresence, motion, useReducedMotion } from "motion/react"
 import { Check, Pause, Play, Plus, Timer } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import {
   activity,
+  ActivityAnnounce,
   ActivityButton,
   ActivityCollapse,
   ActivityCompact,
@@ -38,16 +39,22 @@ type TimerSnapshot = {
 }
 
 export type TimerOptions = {
+  /** Shown in the pill. @default "Focus" */
   label?: string
+  /** Length of the countdown. Fractions work, e.g. `0.5` for 30 seconds. @default 25 */
   minutes?: number
+  /** Starting a timer with an id that's already showing replaces it. @default "timer" */
   id?: string
+  /** Called once when the countdown reaches zero or `end()` is called, even while it's out of view. */
   onDone?: () => void
 }
 
 export type TimerHandle = ActivityViewHandle & {
   pause: () => void
   resume: () => void
+  /** Adds minutes to the countdown. */
   add: (minutes: number) => void
+  /** Finishes now and calls `onDone`. */
   end: () => void
 }
 
@@ -67,19 +74,32 @@ function formatLength(ms: number) {
 }
 
 function createTimerControls(state: ActivityState<TimerSnapshot>, onDone?: () => void) {
-  const pause = () =>
+  let timeout: ReturnType<typeof setTimeout> | undefined
+
+  // Finishing doesn't depend on the view being rendered, so onDone fires on time even out of sight.
+  const schedule = () => {
+    clearTimeout(timeout)
+    const { status, endsAt } = state.get()
+    if (status === "running" && endsAt !== null) timeout = setTimeout(end, Math.max(0, endsAt - Date.now()))
+  }
+
+  const pause = () => {
     state.set((timer) =>
       timer.status === "running"
         ? { ...timer, status: "paused", remaining: remainingAt(timer, Date.now()), endsAt: null }
         : timer
     )
+    schedule()
+  }
 
-  const resume = () =>
+  const resume = () => {
     state.set((timer) =>
       timer.status === "paused" ? { ...timer, status: "running", endsAt: Date.now() + timer.remaining } : timer
     )
+    schedule()
+  }
 
-  const add = (minutes: number) =>
+  const add = (minutes: number) => {
     state.set((timer) => {
       if (timer.status === "done") return timer
       const extra = minutes * MINUTE_MS
@@ -90,14 +110,20 @@ function createTimerControls(state: ActivityState<TimerSnapshot>, onDone?: () =>
         endsAt: timer.endsAt === null ? null : timer.endsAt + extra,
       }
     })
+    schedule()
+  }
 
-  const end = () => {
+  function end() {
     if (state.get().status === "done") return
+    clearTimeout(timeout)
     state.set((timer) => ({ ...timer, status: "done", remaining: 0, endsAt: null }))
     onDone?.()
   }
 
-  return { pause, resume, add, end }
+  const dispose = () => clearTimeout(timeout)
+
+  schedule()
+  return { pause, resume, add, end, dispose }
 }
 
 type TimerControls = ReturnType<typeof createTimerControls>
@@ -127,6 +153,8 @@ function useTimer(state: ActivityState<TimerSnapshot>, controls: TimerControls) 
 type TimerView = ReturnType<typeof useTimer>
 
 function RollingChar({ char }: { char: string }) {
+  // With reduced motion the digits crossfade in place instead of rolling.
+  const roll = useReducedMotion() ? "0%" : "70%"
   if (char === ":") return <span className="px-[0.04em] opacity-60">:</span>
   return (
     <span className="relative inline-flex h-[1.15em] w-[0.62em] justify-center overflow-hidden">
@@ -134,9 +162,9 @@ function RollingChar({ char }: { char: string }) {
         <motion.span
           key={char}
           className="inline-block"
-          initial={{ y: "-70%", opacity: 0, filter: "blur(3px)" }}
+          initial={{ y: `-${roll}`, opacity: 0, filter: "blur(3px)" }}
           animate={{ y: "0%", opacity: 1, filter: "blur(0px)" }}
-          exit={{ y: "70%", opacity: 0, filter: "blur(3px)" }}
+          exit={{ y: roll, opacity: 0, filter: "blur(3px)" }}
           transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
         >
           {char}
@@ -149,10 +177,13 @@ function RollingChar({ char }: { char: string }) {
 function RollingClock({ ms }: { ms: number }) {
   const text = formatClock(ms)
   return (
-    <span aria-label={text} className="inline-flex items-center font-medium tabular-nums">
-      {text.split("").map((char, index) => (
-        <RollingChar key={index} char={char} />
-      ))}
+    <span className="inline-flex items-center font-medium tabular-nums">
+      <span className="sr-only">{text}</span>
+      <span aria-hidden className="inline-flex items-center">
+        {text.split("").map((char, index) => (
+          <RollingChar key={index} char={char} />
+        ))}
+      </span>
     </span>
   )
 }
@@ -270,6 +301,11 @@ function TimerActivity({ state, controls }: { state: ActivityState<TimerSnapshot
   const view = useTimer(state, controls)
   return (
     <>
+      <ActivityAnnounce>
+        {view.timer.status === "done"
+          ? `${view.timer.label} session done`
+          : `${view.timer.label}: ${statusText(view.timer)}`}
+      </ActivityAnnounce>
       <ActivityGlyph label={view.timer.label}>
         <Dial view={view} large={false} />
       </ActivityGlyph>
@@ -279,6 +315,7 @@ function TimerActivity({ state, controls }: { state: ActivityState<TimerSnapshot
   )
 }
 
+/** Shows a countdown: a ring that empties in the pill and rolling digits in the card. */
 export function startTimer({ label = "Focus", minutes = 25, id = "timer", onDone }: TimerOptions = {}): TimerHandle {
   const total = minutes * MINUTE_MS
   const state = createActivityState<TimerSnapshot>({
@@ -289,10 +326,11 @@ export function startTimer({ label = "Focus", minutes = 25, id = "timer", onDone
     status: "running",
   })
   const controls = createTimerControls(state, onDone)
+  const { pause, resume, add, end } = controls
 
   function FocusTimer() {
     return <TimerActivity state={state} controls={controls} />
   }
 
-  return { ...activity.show({ id, view: FocusTimer }), ...controls }
+  return { ...activity.show({ id, view: FocusTimer, onDismiss: controls.dispose }), pause, resume, add, end }
 }

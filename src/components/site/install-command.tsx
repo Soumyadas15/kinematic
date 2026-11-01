@@ -32,7 +32,12 @@ export function InstallCommand({ args, items = ["activity"] }: { args?: string; 
       </div>
       {(Object.keys(runners) as Runner[]).map((runner) => (
         <TabsContent key={runner} value={runner} className="flex items-center justify-between gap-4 py-2 pr-2 pl-4">
-          <code className="overflow-x-auto font-mono text-[13px] whitespace-nowrap">{commandFor(runner, command)}</code>
+          <code
+            tabIndex={0}
+            className="overflow-x-auto rounded-sm font-mono text-[13px] whitespace-nowrap outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+          >
+            {commandFor(runner, command)}
+          </code>
           <CopyButton value={commandFor(runner, command)} />
         </TabsContent>
       ))}

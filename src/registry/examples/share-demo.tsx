@@ -103,10 +103,18 @@ function FileRow({ index, sent }: { index: number; sent: number }) {
   const file = FILES[index]
   const progress = fileProgress(index, sent)
   return (
-    <li className={`flex items-center gap-3 transition-opacity duration-300 ${progress === 0 ? "opacity-50" : ""}`}>
-      <span className="size-8 shrink-0 rounded-[9px]" style={{ background: file.cover }} />
+    <li className="flex items-center gap-3">
+      {/* Queued files dim their artwork and name, not the whole row, so the text stays readable. */}
+      <span
+        className={`size-8 shrink-0 rounded-[9px] transition-opacity duration-300 ${progress === 0 ? "opacity-40" : ""}`}
+        style={{ background: file.cover }}
+      />
       <span className="flex min-w-0 flex-1 flex-col">
-        <span className="truncate text-sm">{file.name}</span>
+        <span
+          className={`truncate text-sm transition-colors duration-300 ${progress === 0 ? "text-activity-muted-foreground" : ""}`}
+        >
+          {file.name}
+        </span>
         <span className="text-[11px] text-activity-muted-foreground tabular-nums">{file.size} MB</span>
       </span>
       {progress === 1 ? (

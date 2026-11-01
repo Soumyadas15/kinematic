@@ -1,7 +1,15 @@
 "use client"
 
 import * as React from "react"
-import { AnimatePresence, motion, motionValue, useSpring, useTransform, type MotionValue } from "motion/react"
+import {
+  AnimatePresence,
+  motion,
+  motionValue,
+  useReducedMotion,
+  useSpring,
+  useTransform,
+  type MotionValue,
+} from "motion/react"
 import { FastForward, Pause, Play, Rewind } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -23,19 +31,28 @@ import {
 } from "@/registry/kinematic/ui/activity"
 
 export type ActivityTrack = {
+  /** Audio URL. It's also fetched once and decoded to draw the waveform, so cross-origin files need CORS. */
   src: string
   title: string
   artist: string
+  /** Cover image URL. */
   cover?: string
 }
 
-export type PlayerOptions = ActivityTrack & { id?: string }
+export type PlayerOptions = ActivityTrack & {
+  /** Showing a player with an id that's already showing replaces it and stops the old audio. @default "now-playing" */
+  id?: string
+}
 
 export type PlayerHandle = ActivityViewHandle & {
+  /** Plays or pauses. */
   toggle: () => void
   pause: () => void
+  /** Animates playback silently, without audio. Useful for demos and screenshots. */
   preview: () => void
+  /** Jumps to a position from 0 (start) to 1 (end). */
   seek: (ratio: number) => void
+  /** Moves by seconds; negative goes back. */
   skip: (seconds: number) => void
   setMuted: (muted: boolean) => void
 }
@@ -75,11 +92,15 @@ function loudness(channel: Float32Array, count: number) {
   return levels.map((level) => 0.12 + ((level - quiet) / range) * 0.88)
 }
 
-async function loadShape(src: string): Promise<Shape> {
+function cssUrl(url: string) {
+  return `url(${JSON.stringify(url)})`
+}
+
+async function loadShape(src: string, signal: AbortSignal): Promise<Shape> {
   const context = createAudioContext()
   if (!context) throw new Error("Web Audio is not available")
   try {
-    const response = await fetch(src)
+    const response = await fetch(src, { signal })
     const audio = await context.decodeAudioData(await response.arrayBuffer())
     const channel = audio.getChannelData(0)
     return {
@@ -96,8 +117,10 @@ function createPlayback(src: string) {
   audio.preload = "metadata"
   const progress = motionValue(0)
   const state = createActivityState<PlaybackSnapshot>({ playing: false, time: 0, duration: 0, shape: null })
+  const loading = new AbortController()
   let syncFrame = 0
   let previewFrame = 0
+  let previewTime = 0
 
   const sync = () => {
     if (audio.duration) progress.set(audio.currentTime / audio.duration)
@@ -116,7 +139,7 @@ function createPlayback(src: string) {
   const events = { play: onPlay, pause: onPause, ended: onPause, timeupdate: onTime, loadedmetadata: onMeta }
   Object.entries(events).forEach(([name, handler]) => audio.addEventListener(name, handler))
 
-  loadShape(src)
+  loadShape(src, loading.signal)
     .then((shape) => state.set((current) => ({ ...current, shape })))
     .catch(() => {})
 
@@ -127,18 +150,26 @@ function createPlayback(src: string) {
     state.set((current) => ({ ...current, playing: false }))
   }
 
+  const duration = () => audio.duration || state.get().duration
+
+  const currentTime = () => (previewFrame ? previewTime : audio.currentTime)
+
   const preview = () => {
     stopPreview()
     let last = performance.now()
-    let time = state.get().time
+    previewTime = state.get().time
     state.set((current) => ({ ...current, playing: true }))
     const advance = (now: number) => {
-      const duration = audio.duration || state.get().duration
-      if (duration) {
-        const shown = Math.floor(time)
-        time = Math.min(duration, time + (now - last) / 1000)
-        progress.set(time / duration)
-        if (Math.floor(time) !== shown) state.set((current) => ({ ...current, time }))
+      const length = duration()
+      if (length) {
+        const shown = Math.floor(previewTime)
+        previewTime = Math.min(length, previewTime + (now - last) / 1000)
+        progress.set(previewTime / length)
+        if (Math.floor(previewTime) !== shown) state.set((current) => ({ ...current, time: previewTime }))
+        if (previewTime >= length) {
+          stopPreview()
+          return
+        }
       }
       last = now
       previewFrame = requestAnimationFrame(advance)
@@ -160,17 +191,22 @@ function createPlayback(src: string) {
   }
 
   const seek = (ratio: number) => {
-    if (!audio.duration) return
-    audio.currentTime = Math.min(1, Math.max(0, ratio)) * audio.duration
-    progress.set(audio.currentTime / audio.duration)
-    state.set((current) => ({ ...current, time: audio.currentTime }))
+    const length = duration()
+    if (!length) return
+    const time = Math.min(1, Math.max(0, ratio)) * length
+    if (previewFrame) previewTime = time
+    if (audio.duration) audio.currentTime = time
+    progress.set(time / length)
+    state.set((current) => ({ ...current, time }))
   }
 
   const skip = (seconds: number) => {
-    if (audio.duration) seek((audio.currentTime + seconds) / audio.duration)
+    const length = duration()
+    if (length) seek((currentTime() + seconds) / length)
   }
 
   const destroy = () => {
+    loading.abort()
     cancelAnimationFrame(syncFrame)
     stopPreview()
     audio.pause()
@@ -215,7 +251,7 @@ function Cover({ track, expanded }: { track: ActivityTrack; expanded: boolean })
       name="cover"
       radius={expanded ? 14 : 18}
       className={cn("shrink-0 bg-activity-muted bg-cover bg-center", expanded ? "size-16" : "size-9")}
-      style={track.cover ? { backgroundImage: `url(${track.cover})` } : undefined}
+      style={track.cover ? { backgroundImage: cssUrl(track.cover) } : undefined}
     />
   )
 }
@@ -234,14 +270,15 @@ function Credits({ track, expanded }: { track: ActivityTrack; expanded: boolean 
 }
 
 function PlayIcon({ playing }: { playing: boolean }) {
+  const scale = useReducedMotion() ? 1 : 0.6
   return (
     <AnimatePresence initial={false} mode="popLayout">
       <motion.span
         key={playing ? "pause" : "play"}
         className="grid place-items-center"
-        initial={{ opacity: 0, scale: 0.6, filter: "blur(4px)" }}
+        initial={{ opacity: 0, scale, filter: "blur(4px)" }}
         animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-        exit={{ opacity: 0, scale: 0.6, filter: "blur(4px)" }}
+        exit={{ opacity: 0, scale, filter: "blur(4px)" }}
         transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
       >
         {playing ? <Pause className="fill-current" /> : <Play className="translate-x-px fill-current" />}
@@ -334,8 +371,18 @@ function Waveform({ peaks, playback }: { peaks: number[] | null; playback: Playb
         if (event.currentTarget.hasPointerCapture(event.pointerId)) playback.seek(ratioFrom(event))
       }}
       onKeyDown={(event) => {
-        if (event.key === "ArrowRight") playback.skip(KEY_SEEK_SECONDS)
-        if (event.key === "ArrowLeft") playback.skip(-KEY_SEEK_SECONDS)
+        const moves: Record<string, () => void> = {
+          ArrowRight: () => playback.skip(KEY_SEEK_SECONDS),
+          ArrowUp: () => playback.skip(KEY_SEEK_SECONDS),
+          ArrowLeft: () => playback.skip(-KEY_SEEK_SECONDS),
+          ArrowDown: () => playback.skip(-KEY_SEEK_SECONDS),
+          Home: () => playback.seek(0),
+          End: () => playback.seek(1),
+        }
+        const move = moves[event.key]
+        if (!move) return
+        event.preventDefault()
+        move()
       }}
       className="relative h-9 cursor-pointer touch-none rounded-md outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
     >
@@ -426,6 +473,7 @@ function PlayerActivity({ track, controller }: { track: ActivityTrack; controlle
   )
 }
 
+/** Shows a now-playing activity. Playback lives as long as the activity and stops when it's dismissed. */
 export function showPlayer({ id = "now-playing", ...track }: PlayerOptions): PlayerHandle {
   const controller = createPlayback(track.src)
 

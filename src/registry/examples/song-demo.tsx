@@ -122,7 +122,9 @@ export function SongActivity() {
                   {SONG.title}
                 </ActivityShared>
                 <span className="truncate text-sm text-activity-muted-foreground">{SONG.artist}</span>
-                <span className="text-xs text-emerald-400">Matched in 4.2 s</span>
+                <span className="text-xs text-[color-mix(in_oklab,var(--color-emerald-500),var(--activity-foreground,var(--popover-foreground))_30%)]">
+                  Matched in 4.2 s
+                </span>
               </span>
               <span className="ml-auto self-start">
                 <ActivityCollapse />

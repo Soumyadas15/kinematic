@@ -54,18 +54,22 @@ function taskItem(
     code: (options) => {
       const task = scenarioTask(scenario, options)
       const outcome = task.outcome()
+      const text = JSON.stringify
+      const action = outcome.action ? `, action: { label: ${text(outcome.action.label)}, onClick: openResult }` : ""
+      const steps = task.items.map((item) => item.id)
       return [
         `import { activity } from "@/components/ui/activity"`,
         "",
+        `// ${[...steps, outcome.action ? "openResult" : null].filter(Boolean).join(", ")} are your own functions.`,
         "activity.track({",
-        `  title: "${task.title}",`,
+        `  title: ${text(task.title)},`,
         options.sequential ? "  sequential: true," : null,
         "  items: [",
         ...task.items.map(
-          (item) => `    { id: "${item.id}", label: "${item.label}", run: (progress) => ${item.id}(progress) },`
+          (item) => `    { id: ${text(item.id)}, label: ${text(item.label)}, run: (progress) => ${item.id}(progress) },`
         ),
         "  ],",
-        `  outcome: () => ({ label: "${outcome.label}", action: { label: "${outcome.action?.label}", onClick: open } }),`,
+        `  outcome: () => ({ label: ${text(outcome.label)}${action} }),`,
         "})",
       ]
         .filter((line) => line !== null)

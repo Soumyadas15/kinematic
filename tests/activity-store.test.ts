@@ -110,6 +110,31 @@ describe("activity.track", () => {
     expect(task(handle.id).outcome).toEqual({ label: "Report ready" })
   })
 
+  it("runs a retry once even when it is triggered twice", async () => {
+    let attempts = 0
+    const handle = activity.track({
+      title: "Upload",
+      items: [
+        {
+          id: "a",
+          label: "a",
+          run: async () => {
+            attempts += 1
+            if (attempts === 1) throw new Error("Offline")
+          },
+        },
+      ],
+      outcome: () => ({ label: "Done" }),
+    })
+    await flush()
+    const { retry } = task(handle.id).items[0]
+    retry?.()
+    retry?.()
+    await flush()
+    expect(attempts).toBe(2)
+    expect(task(handle.id).outcome).toEqual({ label: "Done" })
+  })
+
   it("uses a fallback message for non-Error rejections", async () => {
     const handle = activity.track({
       title: "Upload",
@@ -186,5 +211,34 @@ describe("activity.clear", () => {
     activity.clear()
     expect(activityStore.getEntries()).toHaveLength(0)
     expect(release).toHaveBeenCalledOnce()
+  })
+})
+
+describe("cancellation", () => {
+  it("aborts a tracked task's work when it is dismissed", async () => {
+    let signal: AbortSignal | undefined
+    const later = vi.fn(async () => {})
+    const handle = activity.track({
+      title: "Upload",
+      sequential: true,
+      items: [
+        {
+          id: "a",
+          label: "a",
+          run: (_report, abort) => {
+            signal = abort
+            return new Promise((_, reject) => abort.addEventListener("abort", () => reject(new Error("Aborted"))))
+          },
+        },
+        { id: "b", label: "b", run: later },
+      ],
+      outcome: () => ({ label: "Done" }),
+    })
+    expect(signal?.aborted).toBe(false)
+    handle.dismiss()
+    expect(signal?.aborted).toBe(true)
+    await flush()
+    expect(later).not.toHaveBeenCalled()
+    expect(activityStore.getEntries()).toHaveLength(0)
   })
 })

@@ -33,6 +33,9 @@ Pass `layout` to the viewport to choose how several activities share the screen.
 Tasks are work with steps: uploads, exports, builds, an agent's run. Each item shows its own progress, and one failing doesn't stop the rest.
 
 ```tsx
+import { FileText } from "lucide-react"
+import { activity } from "@/components/ui/activity"
+
 activity.track({
   title: "Importing 3 documents",
   items: files.map((file) => ({
@@ -49,13 +52,16 @@ activity.track({
 })
 ```
 
-- `run(progress)` returns a promise. Call `progress` with a number from 0 to 1 as it goes.
+- `run(progress, signal)` returns a promise. Call `progress` with a number from 0 to 1 as it goes. `signal` aborts if the user dismisses the task, so pass it to `fetch` and the work stops with it.
 - If `run` throws, that item fails with the error's message and gets a Retry button. Collapsed, the pill reads "2 ready · 1 needs attention".
 - When every item is done, the activity settles into `outcome`, folds back into a pill, and shows its action.
 
 For an agent, pass `sequential` so steps run one after another. A failed step pauses the rest until it's retried.
 
 ```tsx
+import { BookOpen, PenLine, Search } from "lucide-react"
+import { activity } from "@/components/ui/activity"
+
 activity.track({
   title: "Researching usage pricing",
   sequential: true,
@@ -71,6 +77,8 @@ activity.track({
 When progress arrives as events, from a websocket or an agent's stream, use `start` and update it yourself.
 
 ```tsx
+import { activity } from "@/components/ui/activity"
+
 const task = activity.start({ title: "Deploying", items: steps })
 
 task.progress("build", 0.4)
@@ -247,6 +255,16 @@ For live data, `createActivityState` makes a small store you can update from out
 
 You can also render `<Activity>` inline, outside the viewport, with `expanded` and `onExpandedChange`.
 
+## Troubleshooting
+
+In development, Kinematic warns in the console about the common setup mistakes below.
+
+- **Nothing appears when I start an activity.** No `ActivityViewport` is mounted. Render it once near the root of your app, for example in `app/layout.tsx`.
+- **Every activity shows up twice.** Two viewports are mounted, often one in a layout and one on a page. Keep a single one.
+- **"Activity parts must be rendered inside an activity".** A part such as `ActivityCompact` or `ActivityShared` was rendered on its own. Put it inside the view you pass to `activity.show({ view })`, or inside an inline `<Activity>`.
+- **The waveform is a plain bar.** The audio couldn't be fetched for decoding, usually because of CORS. Playback still works.
+- **Colours don't match my theme.** The `--activity-*` tokens fall back to `--popover`, `--muted` and `--border`. Check those exist in your CSS, or set the tokens directly (see [Theming](#theming)).
+
 ## API reference
 
 ### ActivityViewport
@@ -274,7 +292,7 @@ You can also render `<Activity>` inline, outside the viewport, with `expanded` a
 | Option | Type | Description |
 | --- | --- | --- |
 | `title` | `string` | Shown while it runs. |
-| `items` | `{ id, label, meta?, icon?, run }[]` | `run(progress)` returns a promise. Call `progress` with 0 to 1. Throw to fail the item. |
+| `items` | `{ id, label, meta?, icon?, run }[]` | `run(progress, signal)` returns a promise. Call `progress` with 0 to 1. Throw to fail the item. `signal` aborts when the task is dismissed. |
 | `sequential` | `boolean` | Run items one after another. A failure pauses the rest until it's retried. |
 | `outcome` | `(task) => { label, action? }` | What it settles into once every item is done. |
 
@@ -284,7 +302,7 @@ You can also render `<Activity>` inline, outside the viewport, with `expanded` a
 
 | Option | Type | Description |
 | --- | --- | --- |
-| `src` | `string` | Audio URL. It's also decoded once to draw the waveform. |
+| `src` | `string` | Audio URL. It's also fetched and decoded once to draw the waveform, so files on another origin need CORS. Without it, the player still plays and shows a plain progress bar. |
 | `title`, `artist` | `string` | Shown in the pill and the card. |
 | `cover` | `string` | Optional cover image URL. |
 | `id` | `string` | Defaults to `"now-playing"`. |
@@ -296,10 +314,10 @@ Returns the view handle plus `toggle()`, `pause()`, `seek(ratio)`, `skip(seconds
 | Option | Type | Description |
 | --- | --- | --- |
 | `name` | `string` | Who you're talking to. |
-| `avatar` | `string` | Optional image URL. Initials are used otherwise. |
+| `avatar` | `string` | Optional image URL. A gradient orb made from `name` is used otherwise. |
 | `stream` | `MediaStream` | Optional microphone stream. Its level drives the bars, and it's stopped when the call ends. |
 | `id` | `string` | Defaults to `"call"`. |
-| `onEnd` | `() => void` | Called when the call ends. |
+| `onEnd` | `() => void` | Called once when the call ends, including when a live call is dismissed or replaced. |
 
 Returns the view handle plus `connect()`, `say(speaker, text)`, `setLevel(speaker, value)`, `mute(muted)`, `end()` and `isEnded()`. `speaker` is `"agent"` or `"user"`.
 
@@ -334,7 +352,16 @@ Returns the view handle plus `pause()`, `resume()`, `add(minutes)` and `end()`.
 | `ActivityGlyph` | `label` (required), used for its accessible name as a bubble. |
 | `ActivityButton` | Every `button` prop, plus `variant` (`ghost`, `soft`, `solid`, `danger`) and `size` (`icon-sm`, `icon-md`, `icon-lg`, `sm`, `lg`). |
 | `ActivityProgress` | `value` from 0 to 1, `className`. |
+| `ActivityAnnounce` | `children`: a short message for screen readers. Change it when something worth hearing happens. |
 
 ## Accessibility
 
-Each activity is a polite live region, so progress and results are announced without stealing focus. Status is never color alone: failures are written out with a Retry button, and "needs attention" comes with an icon. With reduced motion, shapes change instantly.
+Activities never steal focus. Each one announces through a polite, visually hidden status message instead of reading the whole surface on every change: a task speaks up when something needs attention and when it settles, a call when it connects, mutes or ends, and a timer when it pauses or finishes. Progress ticks and the running clock stay quiet.
+
+In your own activities, render `ActivityAnnounce` with a short message and change it when something worth hearing happens:
+
+```tsx
+<ActivityAnnounce>{status === "arrived" ? "Your order has arrived" : ""}</ActivityAnnounce>
+```
+
+Status is never color alone: failures are written out with a Retry button, and "needs attention" comes with an icon. The player's waveform is a slider: arrow keys skip 5 seconds, Home and End jump to the start and end. With reduced motion, shapes change instantly and nothing slides or rolls.

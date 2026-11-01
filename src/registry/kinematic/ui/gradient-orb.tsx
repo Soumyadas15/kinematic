@@ -34,6 +34,7 @@ function between(random: () => number, min: number, max: number) {
   return min + random() * (max - min)
 }
 
+/** The colours `GradientOrb` would use for a seed, to reuse elsewhere. */
 export function orbPalette(seed: string): OrbPalette {
   const random = seededRandom(hashString(seed))
   const hue = (HUE_START + Math.floor(random() * HUE_SPAN)) % 360
@@ -64,29 +65,35 @@ const LIGHTING = [
 ].join(", ")
 
 export type GradientOrbProps = Omit<React.ComponentProps<"span">, "children"> & {
+  /** Any string. The same seed always gives the same orb. Also used as its accessible label. */
   seed: string
+  /** Slowly drifts the gradient. Paused for reduced motion. @default false */
   animated?: boolean
 }
 
+/** A mesh gradient avatar generated from a string. Size it with `className`, e.g. `size-10`. */
 export function GradientOrb({ seed, animated = false, className, style, ...props }: GradientOrbProps) {
   return (
     <span
       role="img"
       aria-label={seed}
       data-slot="gradient-orb"
-      className={cn("relative inline-block shrink-0 overflow-hidden rounded-full", className)}
+      className={cn("relative inline-block shrink-0 rounded-full", className)}
       style={style}
       {...props}
     >
-      <span
-        aria-hidden
-        className={cn(
-          "absolute inset-[-25%] blur-[6px] motion-safe:transition-transform",
-          animated && "motion-safe:animate-[spin_9s_linear_infinite]"
-        )}
-        style={{ background: meshBackground(orbPalette(seed)) }}
-      />
-      <span aria-hidden className="absolute inset-0 rounded-full" style={{ background: LIGHTING }} />
+      {/* clip-path, not just overflow + radius: WebKit stops clipping the blurred layer to the radius once an
+          ancestor is transformed (as shared elements are mid-morph), and the orb renders as a square. */}
+      <span aria-hidden className="absolute inset-0 isolate overflow-hidden rounded-full [clip-path:circle(50%)]">
+        <span
+          className={cn(
+            "absolute inset-[-25%] blur-[6px]",
+            animated && "motion-safe:animate-[spin_9s_linear_infinite]"
+          )}
+          style={{ background: meshBackground(orbPalette(seed)) }}
+        />
+        <span className="absolute inset-0" style={{ background: LIGHTING }} />
+      </span>
       <span aria-hidden className="absolute inset-0 rounded-full ring-1 ring-black/10 ring-inset dark:ring-white/10" />
     </span>
   )
