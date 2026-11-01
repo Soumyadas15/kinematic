@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs"
 import path from "node:path"
 import { gzipSync } from "node:zlib"
+import ts from "typescript"
 
 const BUDGET_KB = 12.5
 const DEPENDENCY = /\/r\/([a-z0-9-]+)\.json$/
@@ -17,8 +18,16 @@ function collect(name, items = new Map()) {
   return items
 }
 
+// Measures code, not comments: JSDoc helps in the editor but is stripped from every bundle.
+const printer = ts.createPrinter({ removeComments: true })
+
+function withoutComments({ path: file, content }) {
+  const kind = file.endsWith("x") ? ts.ScriptKind.TSX : ts.ScriptKind.TS
+  return printer.printFile(ts.createSourceFile(file, content, ts.ScriptTarget.Latest, false, kind))
+}
+
 const kilobytes = (bytes) => bytes / 1024
-const gzipped = (item) => item.files.reduce((sum, file) => sum + gzipSync(file.content).length, 0)
+const gzipped = (item) => item.files.reduce((sum, file) => sum + gzipSync(withoutComments(file)).length, 0)
 
 const items = collect("activity")
 let total = 0
@@ -27,7 +36,9 @@ for (const [name, item] of items) {
   total += size
   console.log(`${name.padEnd(24)} ${kilobytes(size).toFixed(1).padStart(6)} kB gzip`)
 }
-console.log(`${"total".padEnd(24)} ${kilobytes(total).toFixed(1).padStart(6)} kB gzip (budget ${BUDGET_KB} kB)`)
+console.log(
+  `${"total".padEnd(24)} ${kilobytes(total).toFixed(1).padStart(6)} kB gzip, without comments (budget ${BUDGET_KB} kB)`
+)
 
 if (kilobytes(total) > BUDGET_KB) {
   console.error(`@kinematic/activity is over its size budget by ${(kilobytes(total) - BUDGET_KB).toFixed(1)} kB`)
