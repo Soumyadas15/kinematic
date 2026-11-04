@@ -40,7 +40,7 @@ const views: Record<string, Pick<ShowcaseItem, "view" | "show">> = {
 
 export const showcase: ShowcaseItem[] = catalog.map((entry) => ({ ...entry, ...views[entry.id] }))
 
-export const featured = ["meeting", "agent", "captions", "weather"].flatMap((id) =>
+export const featured = ["weather", "meeting", "agent", "captions"].flatMap((id) =>
   showcase.filter((item) => item.id === id)
 )
 
