@@ -54,9 +54,10 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm exec playwright install --with-deps chromium webkit firefox
+      # Chromium only, to keep CI quick. `pnpm e2e` locally also runs WebKit, Firefox and mobile Safari.
+      - run: pnpm exec playwright install --with-deps --only-shell chromium
       - run: pnpm build
-      - run: pnpm e2e
+      - run: pnpm e2e --project=chromium
       - uses: actions/upload-artifact@v4
         if: failure()
         with:

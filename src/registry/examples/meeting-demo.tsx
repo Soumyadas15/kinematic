@@ -66,9 +66,12 @@ function Bar({ level, height }: { level: MotionValue<number>; height: number }) 
 }
 
 function Waveform({ bars, height, className }: { bars: MotionValue<number>[]; height: number; className?: string }) {
+  // `text` moves it without scaling: the 8-bar and 54-bar copies differ so much in width that a scaled morph
+  // stretches the bars into blocks.
   return (
     <ActivityShared
       name="wave"
+      text
       className={cn("flex items-center gap-[3px] text-activity-foreground", className)}
       style={{ height }}
     >

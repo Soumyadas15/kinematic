@@ -232,10 +232,13 @@ export function Activity({
           onKeyDown={(event) => {
             if (event.key === "Escape" && isExpanded) setOpen(false)
           }}
-          // Content stays pinned to the top-left while the window around it grows or shrinks, so leading
-          // elements keep their inset and the trailing edge reveals, wherever the viewport is anchored.
+          // Content stays pinned to the anchored edges while the window around it grows or shrinks: those edges never
+          // move, so the content holds still and the moving edges reveal it. Centred anchors pin left instead, since
+          // both sides move there and centring would clip the leading element mid-morph.
           className={cn(
-            "pointer-events-auto flex max-w-full items-start justify-start overflow-hidden border border-activity-border bg-activity text-activity-foreground shadow-lg shadow-black/[0.04] dark:shadow-black/30",
+            "pointer-events-auto flex max-w-full overflow-hidden border border-activity-border bg-activity text-activity-foreground shadow-lg shadow-black/[0.04] dark:shadow-black/30",
+            anchor.x === "end" ? "justify-end" : "justify-start",
+            anchor.y === "end" ? "items-end" : "items-start",
             className
           )}
           style={{ width: size.width, height: size.height }}
